@@ -1,0 +1,29 @@
+<nav class="navbar">
+    <div class="navbar-brand">
+        <a routerLink="/metas" class="navbar-logo">
+            <span class="logo-icon">🎯</span>
+            <span class="logo-text">Eficiência em Ação</span>
+        </a>
+    </div>
+
+    <div class="navbar-links">
+        <a routerLink="/metas" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
+            Metas
+        </a>
+    </div>
+
+    <div class="navbar-actions">
+        @if (auth.isLoggedIn()) {
+        <span class="user-info">
+            <span class="user-avatar">👤</span>
+            <span class="user-name">{{ auth.getUsername() }}</span>
+            @if (auth.isCoordenador()) {
+            <span class="role-badge">Coordenador</span>
+            }
+        </span>
+        <button class="btn btn-logout" (click)="logout()">Sair</button>
+        } @else {
+        <button class="btn btn-login" (click)="login()">Entrar</button>
+        }
+    </div>
+</nav>

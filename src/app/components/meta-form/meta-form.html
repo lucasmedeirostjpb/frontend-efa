@@ -1,0 +1,80 @@
+<div class="form-container">
+    <div class="form-header">
+        <a routerLink="/metas" class="back-link">← Voltar</a>
+        <h1 class="form-title">{{ isEditing ? 'Editar Meta' : 'Nova Meta' }}</h1>
+        <p class="form-subtitle">
+            {{ isEditing ? 'Atualize os dados da meta selecionada' : 'Preencha os campos para cadastrar uma nova meta'
+            }}
+        </p>
+    </div>
+
+    @if (loading) {
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Carregando dados...</p>
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="alert alert-error">
+        <span>⚠️</span>
+        {{ errorMessage }}
+    </div>
+    }
+
+    @if (!loading) {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="meta-form">
+        <!-- Título -->
+        <div class="form-group">
+            <label for="titulo" class="form-label">Título <span class="required">*</span></label>
+            <input id="titulo" type="text" formControlName="titulo" class="form-input"
+                placeholder="Ex: Meta de Governança 2025"
+                [class.input-error]="form.get('titulo')?.touched && form.get('titulo')?.invalid" />
+            @if (form.get('titulo')?.touched && form.get('titulo')?.hasError('required')) {
+            <span class="field-error">O título é obrigatório</span>
+            }
+            @if (form.get('titulo')?.hasError('maxlength')) {
+            <span class="field-error">O título deve ter no máximo 255 caracteres</span>
+            }
+        </div>
+
+        <!-- Descrição -->
+        <div class="form-group">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea id="descricao" formControlName="descricao" class="form-input form-textarea"
+                placeholder="Descreva os objetivos e detalhes da meta..." rows="4"></textarea>
+            @if (form.get('descricao')?.hasError('maxlength')) {
+            <span class="field-error">A descrição deve ter no máximo 2000 caracteres</span>
+            }
+        </div>
+
+        <!-- Concluída (Toggle) -->
+        <div class="form-group">
+            <div class="toggle-container">
+                <label class="toggle">
+                    <input type="checkbox" formControlName="concluida" />
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">
+                    {{ form.get('concluida')?.value ? 'Meta concluída' : 'Meta pendente' }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+            <a routerLink="/metas" class="btn btn-cancel">Cancelar</a>
+            @if (auth.isCoordenador()) {
+            <button type="submit" class="btn btn-submit" [disabled]="submitting || form.invalid">
+                @if (submitting) {
+                <span class="btn-spinner"></span>
+                Salvando...
+                } @else {
+                {{ isEditing ? 'Salvar Alterações' : 'Criar Meta' }}
+                }
+            </button>
+            }
+        </div>
+    </form>
+    }
+</div>

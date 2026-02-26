@@ -1,0 +1,64 @@
+<div class="meta-list-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Metas</h1>
+            <p class="page-subtitle">Gerencie as metas do Prêmio CNJ de Qualidade</p>
+        </div>
+        @if (auth.isCoordenador()) {
+        <a routerLink="/metas/nova" class="btn btn-primary">
+            <span class="btn-icon">＋</span>
+            Nova Meta
+        </a>
+        }
+    </div>
+
+    @if (loading) {
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Carregando metas...</p>
+    </div>
+    }
+
+    @if (error) {
+    <div class="error-container">
+        <p class="error-icon">⚠️</p>
+        <p class="error-message">{{ error }}</p>
+        <button class="btn btn-outline" (click)="carregarMetas()">Tentar novamente</button>
+    </div>
+    }
+
+    @if (!loading && !error && metas.length === 0) {
+    <div class="empty-container">
+        <p class="empty-icon">📋</p>
+        <p class="empty-title">Nenhuma meta cadastrada</p>
+        <p class="empty-subtitle">As metas aparecerão aqui assim que forem registradas.</p>
+    </div>
+    }
+
+    @if (!loading && !error && metas.length > 0) {
+    <div class="metas-grid">
+        @for (meta of metas; track meta.id) {
+        <div class="meta-card" [class.concluida]="meta.concluida">
+            <div class="meta-card-header">
+                <span class="status-badge" [class.badge-concluida]="meta.concluida"
+                    [class.badge-pendente]="!meta.concluida">
+                    {{ meta.concluida ? '✓ Concluída' : '◷ Pendente' }}
+                </span>
+                <span class="meta-date">{{ meta.data_criacao | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="meta-card-body">
+                <h3 class="meta-title">{{ meta.titulo }}</h3>
+                <p class="meta-description">{{ meta.descricao || 'Sem descrição' }}</p>
+            </div>
+            @if (auth.isCoordenador()) {
+            <div class="meta-card-footer">
+                <a [routerLink]="['/metas/editar', meta.id]" class="btn btn-edit">
+                    ✎ Editar
+                </a>
+            </div>
+            }
+        </div>
+        }
+    </div>
+    }
+</div>
