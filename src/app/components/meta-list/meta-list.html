@@ -55,10 +55,28 @@
                 <a [routerLink]="['/metas/editar', meta.id]" class="btn btn-edit">
                     ✎ Editar
                 </a>
+                <button (click)="deletarMeta(meta)" class="btn btn-delete">
+                    🗑 Excluir
+                </button>
             </div>
             }
         </div>
         }
     </div>
+
+    <!-- Controles de Paginação -->
+    @if (totalPages > 1) {
+    <div class="pagination-container">
+        <button class="btn btn-pagination" [disabled]="isFirst" (click)="paginaAnterior()">
+            ← Anterior
+        </button>
+        <span class="pagination-info">
+            Página {{ currentPage + 1 }} de {{ totalPages }} ({{ totalElements }} metas)
+        </span>
+        <button class="btn btn-pagination" [disabled]="isLast" (click)="proximaPagina()">
+            Próximo →
+        </button>
+    </div>
+    }
     }
 </div>

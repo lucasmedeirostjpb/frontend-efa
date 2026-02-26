@@ -17,6 +17,14 @@ export class MetaList implements OnInit {
   loading = true;
   error = '';
 
+  // Paginação
+  currentPage = 0;
+  totalPages = 0;
+  totalElements = 0;
+  pageSize = 10;
+  isFirst = true;
+  isLast = true;
+
   constructor(
     private metaService: MetaService,
     private cdr: ChangeDetectorRef,
@@ -30,9 +38,14 @@ export class MetaList implements OnInit {
   carregarMetas(): void {
     this.loading = true;
     this.error = '';
-    this.metaService.listar().subscribe({
-      next: (metas) => {
-        this.metas = metas;
+    this.metaService.listar(this.currentPage, this.pageSize).subscribe({
+      next: (page) => {
+        this.metas = page.content;
+        this.currentPage = page.number;
+        this.totalPages = page.totalPages;
+        this.totalElements = page.totalElements;
+        this.isFirst = page.first;
+        this.isLast = page.last;
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -40,6 +53,36 @@ export class MetaList implements OnInit {
         console.error('Erro ao carregar metas', err);
         this.error = 'Não foi possível carregar as metas. Tente novamente.';
         this.loading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  paginaAnterior(): void {
+    if (!this.isFirst) {
+      this.currentPage--;
+      this.carregarMetas();
+    }
+  }
+
+  proximaPagina(): void {
+    if (!this.isLast) {
+      this.currentPage++;
+      this.carregarMetas();
+    }
+  }
+
+  deletarMeta(meta: Meta): void {
+    const confirmado = window.confirm(`Deseja realmente excluir a meta "${meta.titulo}"?`);
+    if (!confirmado) return;
+
+    this.metaService.deletar(meta.id).subscribe({
+      next: () => {
+        this.carregarMetas();
+      },
+      error: (err) => {
+        console.error('Erro ao excluir meta', err);
+        this.error = 'Não foi possível excluir a meta. Verifique suas permissões.';
         this.cdr.detectChanges();
       },
     });

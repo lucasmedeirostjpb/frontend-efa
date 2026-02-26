@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Meta } from '../models/meta.model';
+import { Meta, Page } from '../models/meta.model';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -14,10 +14,13 @@ export class MetaService {
   constructor(private http: HttpClient) { }
 
   /**
-   * GET /api/metas - Rota pública, lista todas as metas.
+   * GET /api/metas?page=X&size=Y - Lista metas com paginação.
    */
-  listar(): Observable<Meta[]> {
-    return this.http.get<Meta[]>(this.apiUrl);
+  listar(page: number = 0, size: number = 10): Observable<Page<Meta>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<Page<Meta>>(this.apiUrl, { params });
   }
 
   /**
@@ -41,5 +44,13 @@ export class MetaService {
    */
   atualizar(id: number, meta: Partial<Meta>): Observable<Meta> {
     return this.http.put<Meta>(`${this.apiUrl}/${id}`, meta);
+  }
+
+  /**
+   * DELETE /api/metas/:id - Exclui uma meta.
+   * Requer role COORDENADOR (token via interceptor).
+   */
+  deletar(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
