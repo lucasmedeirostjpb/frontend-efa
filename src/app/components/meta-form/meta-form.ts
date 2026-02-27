@@ -122,4 +122,11 @@ export class MetaForm implements OnInit {
       });
     }
   }
+
+  formatarValorHistorico(valor: string | null | undefined): string {
+    if (!valor) return 'Vazio';
+    if (valor === 'true') return 'Sim';
+    if (valor === 'false') return 'Não';
+    return valor;
+  }
 }

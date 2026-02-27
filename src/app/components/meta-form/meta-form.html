@@ -84,29 +84,23 @@
         <div class="timeline">
             @for (item of historico$(); track item.id; let i = $index) {
             <div class="timeline-item">
-                <div class="timeline-marker" [class.marker-create]="item.tipo === 'CREATE'"></div>
+                <div class="timeline-marker" [class.marker-create]="item.tipoMudanca === 'CRIACAO'"></div>
                 <div class="timeline-content">
                     <div class="timeline-header">
                         <span class="timeline-author">{{ item.autor }}</span>
-                        <span class="timeline-date">{{ item.data | date:'dd/MM/yyyy HH:mm' }}</span>
+                        <span class="timeline-date">{{ item.dataHora | date:'dd/MM/yyyy HH:mm' }}</span>
                     </div>
 
-                    @if (item.tipo === 'CREATE') {
+                    @if (item.tipoMudanca === 'CRIACAO') {
                     <div class="timeline-badge create-badge">✨ Meta Criada</div>
-                    } @else if (item.tipo === 'UPDATE') {
+                    } @else if (item.tipoMudanca === 'ATUALIZACAO') {
                     <ul class="timeline-changes">
                         @for (prop of item.propriedadesAlteradas; track prop.propriedade) {
                         <li class="change-entry">
                             <span class="prop-name">{{ prop.propriedade }}:</span>
-                            <span class="prop-old">
-                                {{ prop.valorAntigo === 'true' ? 'Sim' : (prop.valorAntigo === 'false' ? 'Não' :
-                                prop.valorAntigo) || 'Vazio' }}
-                            </span>
+                            <span class="prop-old">{{ formatarValorHistorico(prop.valorAntigo) }}</span>
                             <span class="arrow">→</span>
-                            <span class="prop-new">
-                                {{ prop.valorNovo === 'true' ? 'Sim' : (prop.valorNovo === 'false' ? 'Não' :
-                                prop.valorNovo) || 'Vazio' }}
-                            </span>
+                            <span class="prop-new">{{ formatarValorHistorico(prop.valorNovo) }}</span>
                         </li>
                         }
                     </ul>

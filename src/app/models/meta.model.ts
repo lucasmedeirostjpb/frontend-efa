@@ -35,7 +35,7 @@ export interface PropriedadeAlterada {
 export interface HistoricoAlteracao {
   id: string; // O backend costuma retornar um id gerado pro snapshot/commit
   autor: string;
-  data: string | Date;
-  tipo: 'CREATE' | 'UPDATE' | 'DELETE' | string;
+  dataHora: string | Date;
+  tipoMudanca: 'CRIACAO' | 'ATUALIZACAO' | 'EXCLUSAO' | string;
   propriedadesAlteradas: PropriedadeAlterada[];
 }
