@@ -44,6 +44,11 @@
     letter-spacing: -0.5px;
 }
 
+.form-subtitle.arrow {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
 .form-subtitle {
     color: #64748b;
     font-size: 0.95rem;
@@ -275,4 +280,143 @@
     margin-top: 1rem;
     color: #64748b;
     font-size: 0.95rem;
+
+    /* ========== Timeline (JaVers) ========== */
+    .timeline-container {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    .timeline-title {
+        font-size: 1.1rem;
+        color: #e2e8f0;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 1.5rem;
+    }
+
+    /* Vertical Line */
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 4px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1.8rem;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Marker */
+    .timeline-marker {
+        position: absolute;
+        left: -1.75rem;
+        top: 5px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #3b82f6;
+        /* Blue for update */
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        z-index: 1;
+    }
+
+    .timeline-marker.marker-create {
+        background: #10b981;
+        /* Green for create */
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .timeline-content {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 1.2rem;
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.8rem;
+    }
+
+    .timeline-author {
+        font-weight: 600;
+        color: #f8fafc;
+        font-size: 0.9rem;
+    }
+
+    .timeline-date {
+        color: #64748b;
+        font-size: 0.8rem;
+    }
+
+    /* Badges & Changes */
+    .timeline-badge {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .create-badge {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .timeline-changes {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .change-entry {
+        font-size: 0.85rem;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 0.6rem 0.8rem;
+        border-radius: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .prop-name {
+        color: #cbd5e1;
+        font-weight: 500;
+    }
+
+    .prop-old {
+        color: #ef4444;
+        text-decoration: line-through;
+        opacity: 0.8;
+    }
+
+    .prop-new {
+        color: #22c55e;
+        font-weight: 500;
+    }
+
+    .arrow {
+        color: #64748b;
+        font-size: 0.8rem;
+    }
 }

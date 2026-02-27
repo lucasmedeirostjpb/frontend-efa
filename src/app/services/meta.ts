@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Meta, Page } from '../models/meta.model';
+import { Meta, Page, HistoricoAlteracao } from '../models/meta.model';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -28,6 +28,13 @@ export class MetaService {
    */
   buscarPorId(id: number): Observable<Meta> {
     return this.http.get<Meta>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * GET /api/metas/:id/historico - Busca o histórico de alterações (JaVers).
+   */
+  buscarHistorico(id: number): Observable<HistoricoAlteracao[]> {
+    return this.http.get<HistoricoAlteracao[]>(`${this.apiUrl}/${id}/historico`);
   }
 
   /**
