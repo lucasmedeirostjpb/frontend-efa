@@ -97,10 +97,11 @@
                     <ul class="timeline-changes">
                         @for (prop of item.propriedadesAlteradas; track prop.propriedade) {
                         <li class="change-entry">
-                            <span class="prop-name">{{ prop.propriedade }}:</span>
-                            <span class="prop-old">{{ formatarValorHistorico(prop.valorAntigo) }}</span>
+                            <span class="prop-name">{{ traduzirPropriedade(prop.propriedade) }}:</span>
+                            <span class="prop-old">{{ formatarValorHistorico(prop.valorAntigo, prop.propriedade)
+                                }}</span>
                             <span class="arrow">→</span>
-                            <span class="prop-new">{{ formatarValorHistorico(prop.valorNovo) }}</span>
+                            <span class="prop-new">{{ formatarValorHistorico(prop.valorNovo, prop.propriedade) }}</span>
                         </li>
                         }
                     </ul>

@@ -9,6 +9,7 @@ import { HistoricoAlteracao } from '../../models/meta.model';
 @Component({
   selector: 'app-meta-form',
   imports: [ReactiveFormsModule, RouterLink, DatePipe],
+  providers: [DatePipe],
   templateUrl: './meta-form.html',
   styleUrl: './meta-form.css',
 })
@@ -24,13 +25,21 @@ export class MetaForm implements OnInit {
   // Histórico de auditoria (JaVers)
   historico$ = signal<HistoricoAlteracao[]>([]);
 
+  dicionarioProps: Record<string, string> = {
+    'titulo': 'Título',
+    'descricao': 'Descrição',
+    'concluida': 'Concluída',
+    'dataCriacao': 'Data de Criação'
+  };
+
   constructor(
     private fb: FormBuilder,
     private metaService: MetaService,
     private route: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    public auth: Auth
+    public auth: Auth,
+    private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
@@ -123,10 +132,20 @@ export class MetaForm implements OnInit {
     }
   }
 
-  formatarValorHistorico(valor: string | null | undefined): string {
-    if (!valor) return 'Vazio';
-    if (valor === 'true') return 'Sim';
-    if (valor === 'false') return 'Não';
-    return valor;
+  traduzirPropriedade(prop: string): string {
+    return this.dicionarioProps[prop] || prop;
+  }
+
+  formatarValorHistorico(valor: any, prop: string): string {
+    if (valor === null || valor === undefined || valor === '') return 'Vazio';
+    if (valor === true || valor === 'true') return 'Sim';
+    if (valor === false || valor === 'false') return 'Não';
+
+    if (prop === 'dataCriacao' && valor) {
+      const formattedDate = this.datePipe.transform(valor, 'dd/MM/yyyy HH:mm');
+      return formattedDate ? formattedDate : String(valor);
+    }
+
+    return String(valor);
   }
 }
