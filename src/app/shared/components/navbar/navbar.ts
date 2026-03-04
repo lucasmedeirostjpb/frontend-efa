@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { Auth } from '../../services/auth';
+import { Auth } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-navbar',
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  styleUrl: './navbar.scss',
 })
 export class Navbar {
 

@@ -3,15 +3,15 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { MetaService } from '../../services/meta';
-import { Auth } from '../../services/auth';
-import { HistoricoAlteracao } from '../../models/meta.model';
+import { Auth } from '../../../../core/services/auth';
+import { Meta, HistoricoAlteracao } from '../../models/meta.model';
 
 @Component({
   selector: 'app-meta-form',
   imports: [ReactiveFormsModule, RouterLink, DatePipe],
   providers: [DatePipe],
   templateUrl: './meta-form.html',
-  styleUrl: './meta-form.css',
+  styleUrl: './meta-form.scss',
 })
 export class MetaForm implements OnInit {
 
@@ -62,7 +62,7 @@ export class MetaForm implements OnInit {
 
     // Busca a meta
     this.metaService.buscarPorId(id).subscribe({
-      next: (meta) => {
+      next: (meta: Meta) => {
         this.form.patchValue({
           titulo: meta.titulo,
           descricao: meta.descricao,
@@ -71,17 +71,17 @@ export class MetaForm implements OnInit {
 
         // Busca o histórico de alterações (após carregar a meta ou em paralelo)
         this.metaService.buscarHistorico(id).subscribe({
-          next: (historico) => {
+          next: (historico: HistoricoAlteracao[]) => {
             this.historico$.set(historico);
             this.cdr.detectChanges();
           },
-          error: (err) => console.error('Erro ao carregar histórico:', err)
+          error: (err: any) => console.error('Erro ao carregar histórico:', err)
         });
 
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao carregar meta', err);
         if (err.status === 404) {
           this.router.navigate(['/metas']);
@@ -111,7 +111,7 @@ export class MetaForm implements OnInit {
           this.submitting = false;
           this.router.navigate(['/metas']);
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Erro ao atualizar meta', err);
           this.errorMessage = 'Erro ao atualizar a meta. Verifique suas permissões.';
           this.submitting = false;
@@ -123,7 +123,7 @@ export class MetaForm implements OnInit {
           this.submitting = false;
           this.router.navigate(['/metas']);
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Erro ao criar meta', err);
           this.errorMessage = 'Erro ao criar a meta. Verifique suas permissões.';
           this.submitting = false;

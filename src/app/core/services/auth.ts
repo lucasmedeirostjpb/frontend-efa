@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Keycloak from 'keycloak-js';
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,7 @@ export class Auth {
       const authenticated = await this.keycloak.init({
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri:
-          window.location.origin + '/silent-check-sso.html',
+          window.location.origin + '/assets/silent-check-sso.html',
         checkLoginIframe: false,
       });
       return authenticated;

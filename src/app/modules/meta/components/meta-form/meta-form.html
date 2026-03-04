@@ -82,7 +82,7 @@
     <div class="timeline-container">
         <h2 class="timeline-title">Histórico de Alterações</h2>
         <div class="timeline">
-            @for (item of historico$(); track item.id; let i = $index) {
+            @for (item of historico$(); track $index; let i = $index) {
             <div class="timeline-item">
                 <div class="timeline-marker" [class.marker-create]="item.tipoMudanca === 'CRIACAO'"></div>
                 <div class="timeline-content">

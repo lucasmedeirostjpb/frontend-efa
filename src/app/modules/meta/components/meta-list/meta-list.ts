@@ -3,13 +3,13 @@ import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { Meta } from '../../models/meta.model';
 import { MetaService } from '../../services/meta';
-import { Auth } from '../../services/auth';
+import { Auth } from '../../../../core/services/auth';
 
 @Component({
   selector: 'app-meta-list',
   imports: [RouterLink, DatePipe],
   templateUrl: './meta-list.html',
-  styleUrl: './meta-list.css',
+  styleUrl: './meta-list.scss',
 })
 export class MetaList implements OnInit {
 
@@ -49,7 +49,7 @@ export class MetaList implements OnInit {
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao carregar metas', err);
         this.error = 'Não foi possível carregar as metas. Tente novamente.';
         this.loading = false;
@@ -80,7 +80,7 @@ export class MetaList implements OnInit {
       next: () => {
         this.carregarMetas();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao excluir meta', err);
         this.error = 'Não foi possível excluir a meta. Verifique suas permissões.';
         this.cdr.detectChanges();
