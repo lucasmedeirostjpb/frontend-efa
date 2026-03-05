@@ -26,14 +26,14 @@ export class MetaService {
   /**
    * GET /api/metas/:id - Busca uma meta pelo ID.
    */
-  buscarPorId(id: number): Observable<Meta> {
+  buscarPorId(id: string): Observable<Meta> {
     return this.http.get<Meta>(`${this.apiUrl}/${id}`);
   }
 
   /**
    * GET /api/metas/:id/historico - Busca o histórico de alterações (JaVers).
    */
-  buscarHistorico(id: number): Observable<HistoricoAlteracao[]> {
+  buscarHistorico(id: string): Observable<HistoricoAlteracao[]> {
     return this.http.get<HistoricoAlteracao[]>(`${this.apiUrl}/${id}/historico`);
   }
 
@@ -49,7 +49,7 @@ export class MetaService {
    * PUT /api/metas/:id - Atualiza uma meta existente.
    * Requer role COORDENADOR (token via interceptor).
    */
-  atualizar(id: number, meta: Partial<Meta>): Observable<Meta> {
+  atualizar(id: string, meta: Partial<Meta>): Observable<Meta> {
     return this.http.put<Meta>(`${this.apiUrl}/${id}`, meta);
   }
 
@@ -57,7 +57,7 @@ export class MetaService {
    * DELETE /api/metas/:id - Exclui uma meta.
    * Requer role COORDENADOR (token via interceptor).
    */
-  deletar(id: number): Observable<void> {
+  deletar(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

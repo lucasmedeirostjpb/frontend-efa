@@ -18,6 +18,7 @@ export class Auth {
   }
 
   async init(): Promise<boolean> {
+    console.log('Auth: Initializing Keycloak...');
     try {
       const authenticated = await this.keycloak.init({
         onLoad: 'check-sso',
@@ -25,9 +26,10 @@ export class Auth {
           window.location.origin + '/assets/silent-check-sso.html',
         checkLoginIframe: false,
       });
+      console.log('Auth: Keycloak initialized, authenticated:', authenticated);
       return authenticated;
     } catch (error) {
-      console.error('Keycloak init failed', error);
+      console.error('Auth: Keycloak init failed!', error);
       return false;
     }
   }

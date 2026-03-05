@@ -1,5 +1,5 @@
 export interface Meta {
-  id: number;
+  id: string;
   titulo: string;
   descricao: string;
   concluida: boolean;
@@ -13,8 +13,8 @@ export interface Page<T> {
   content: T[];
   totalElements: number;
   totalPages: number;
-  number: number;       // página atual (0-indexed)
-  size: number;         // itens por página
+  number: number; // página atual (0-indexed)
+  size: number; // itens por página
   first: boolean;
   last: boolean;
   empty: boolean;

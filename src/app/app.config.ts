@@ -7,7 +7,11 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { Auth } from './core/services/auth';
 
 function initializeKeycloak(auth: Auth) {
-  return () => auth.init();
+  console.log('APP_INITIALIZER: initializeKeycloak starting...');
+  return () => auth.init().then(res => {
+    console.log('APP_INITIALIZER: initializeKeycloak finished with:', res);
+    return res;
+  });
 }
 
 export const appConfig: ApplicationConfig = {
