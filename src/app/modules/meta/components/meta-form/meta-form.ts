@@ -17,7 +17,7 @@ export class MetaForm implements OnInit {
 
   form!: FormGroup;
   isEditing = false;
-  metaId: number | null = null;
+  metaId: string | null = null;
   loading = false;
   submitting = false;
   errorMessage = '';
@@ -52,12 +52,12 @@ export class MetaForm implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.isEditing = true;
-      this.metaId = +idParam;
+      this.metaId = idParam;
       this.carregarMeta(this.metaId);
     }
   }
 
-  carregarMeta(id: number): void {
+  carregarMeta(id: string): void {
     this.loading = true;
 
     // Busca a meta
@@ -72,7 +72,26 @@ export class MetaForm implements OnInit {
         // Busca o histórico de alterações (após carregar a meta ou em paralelo)
         this.metaService.buscarHistorico(id).subscribe({
           next: (historico: HistoricoAlteracao[]) => {
-            this.historico$.set(historico);
+            // Remove 'dataAtualizacao' do histórico, pois é redundante com a data/hora do item
+            const historicoFiltrado = historico
+              .map(item => {
+                if (item.propriedadesAlteradas) {
+                  return {
+                    ...item,
+                    propriedadesAlteradas: item.propriedadesAlteradas.filter(
+                      prop => prop.propriedade !== 'dataAtualizacao'
+                    )
+                  };
+                }
+                return item;
+              })
+              .filter(item => 
+                // Mantém CRIAÇÃO e atualizações que ainda possuam outras propriedades alteradas
+                item.tipoMudanca !== 'ATUALIZACAO' || 
+                (item.propriedadesAlteradas && item.propriedadesAlteradas.length > 0)
+              );
+
+            this.historico$.set(historicoFiltrado);
             this.cdr.detectChanges();
           },
           error: (err: any) => console.error('Erro ao carregar histórico:', err)

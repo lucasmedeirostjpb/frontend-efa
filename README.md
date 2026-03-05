@@ -24,6 +24,8 @@ Frontend Angular do sistema **Eficiência em Ação**, desenvolvido para gerenci
 |------------|--------|-----------|
 | **Angular** | 19+ | Framework SPA (standalone components, 2025 style guide) |
 | **TypeScript** | 5.x | Tipagem estática |
+| **PrimeNG** | 21+ | Biblioteca de componentes UI |
+| **SCSS** | - | Pré-processador CSS para estilos |
 | **Keycloak JS** | latest | Autenticação SSO via OAuth2/OIDC |
 | **keycloak-angular** | latest | Integração Keycloak + Angular |
 | **RxJS** | 7.x | Programação reativa (Observables) |
@@ -77,26 +79,31 @@ O frontend segue uma arquitetura em camadas:
 ## 📁 Estrutura de Pastas
 
 ```
-src/app/
-├── models/
-│   └── meta.model.ts           # Interface Meta (contrato da API)
-├── services/
-│   ├── auth.ts                 # AuthService — wrapper do Keycloak
-│   └── meta.ts                 # MetaService — chamadas HTTP CRUD
-├── interceptors/
-│   └── auth.interceptor.ts     # Interceptor funcional — Bearer token
-├── components/
-│   ├── navbar/                 # Barra de navegação + login/logout
-│   ├── meta-list/              # Listagem de metas (cards)
-│   └── meta-form/              # Formulário de criação/edição
-├── environments/
-│   ├── environment.ts          # Config dev (API URL, Keycloak)
-│   └── environment.prod.ts     # Config produção
-├── app.ts                      # Componente raiz
-├── app.html                    # Template raiz
-├── app.css                     # Estilos raiz
-├── app.config.ts               # Providers (HttpClient, Router, Keycloak)
-└── app.routes.ts               # Definição de rotas
+src/
+├── app/
+│   ├── core/                   # Serviços core (Auth, Interceptors)
+│   │   ├── services/
+│   │   │   └── auth.ts
+│   │   └── interceptors/
+│   │       └── auth.interceptor.ts
+│   ├── modules/                # Módulos e features da aplicação
+│   │   └── meta/
+│   │       ├── components/     # Componentes da feature (meta-list, meta-form)
+│   │       ├── models/         # Interfaces e Tipos
+│   │       └── services/       # Serviços locais da feature
+│   ├── shared/                 # Blocos reutilizáveis genéricos
+│   │   └── components/
+│   │       └── navbar/
+│   ├── app.ts                  # Componente raiz
+│   ├── app.html                # Template raiz
+│   ├── app.config.ts           # Providers (HttpClient, Router, Keycloak)
+│   └── app.routes.ts           # Definição de rotas principais
+├── environments/               # Configurações de dev/prod (API URL, Keycloak)
+│   ├── environment.ts
+│   └── environment.prod.ts
+└── scss/                       # Estilos globais, temas PrimeNG e variáveis locais
+    ├── _variables.scss
+    └── styles.scss
 ```
 
 ---
