@@ -2,8 +2,19 @@ export interface Meta {
   id: string;
   titulo: string;
   descricao: string;
-  concluida: boolean;
   data_criacao: string | Date;
+  status: string;
+  eixoId: number;
+  setorId: number;
+  eixoNome?: string;
+  setorNome?: string;
+  artigo: string;
+  anoCiclo: number;
+  deadline: string | Date;
+  pMaximo: number;
+  estimativaReal: number;
+  tetoEstimado: number;
+  pontosAtingidos: number;
 }
 
 /**
@@ -38,4 +49,15 @@ export interface HistoricoAlteracao {
   dataHora: string | Date;
   tipoMudanca: 'CRIACAO' | 'ATUALIZACAO' | 'EXCLUSAO' | string;
   propriedadesAlteradas: PropriedadeAlterada[];
+}
+
+export interface Eixo {
+  id: number;
+  nome: string;
+}
+
+export interface Setor {
+  id: number;
+  sigla: string;
+  nome: string;
 }

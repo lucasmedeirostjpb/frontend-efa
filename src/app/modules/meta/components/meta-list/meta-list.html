@@ -5,10 +5,10 @@
             <p class="page-subtitle">Gerencie as metas do Prêmio CNJ de Qualidade</p>
         </div>
         @if (auth.isCoordenador()) {
-        <a routerLink="/metas/nova" class="btn btn-primary">
-            <span class="btn-icon">＋</span>
+        <button (click)="abrirModalNovaMeta()" class="btn btn-primary">
+            <i class="material-icons btn-icon">add</i>
             Nova Meta
-        </a>
+        </button>
         }
     </div>
 
@@ -21,7 +21,7 @@
 
     @if (error) {
     <div class="error-container">
-        <p class="error-icon">⚠️</p>
+        <i class="material-icons error-icon">warning</i>
         <p class="error-message">{{ error }}</p>
         <button class="btn btn-outline" (click)="carregarMetas()">Tentar novamente</button>
     </div>
@@ -29,7 +29,7 @@
 
     @if (!loading && !error && metas.length === 0) {
     <div class="empty-container">
-        <p class="empty-icon">📋</p>
+        <i class="material-icons empty-icon">assignment</i>
         <p class="empty-title">Nenhuma meta cadastrada</p>
         <p class="empty-subtitle">As metas aparecerão aqui assim que forem registradas.</p>
     </div>
@@ -38,29 +38,70 @@
     @if (!loading && !error && metas.length > 0) {
     <div class="metas-grid">
         @for (meta of metas; track meta.id) {
-        <div class="meta-card" [class.concluida]="meta.concluida">
-            <div class="meta-card-header">
-                <span class="status-badge" [class.badge-concluida]="meta.concluida"
-                    [class.badge-pendente]="!meta.concluida">
-                    {{ meta.concluida ? '✓ Concluída' : '◷ Pendente' }}
-                </span>
-                <span class="meta-date">{{ meta.data_criacao | date:'dd/MM/yyyy' }}</span>
-            </div>
-            <div class="meta-card-body">
-                <h3 class="meta-title">{{ meta.titulo }}</h3>
-                <p class="meta-description">{{ meta.descricao || 'Sem descrição' }}</p>
-            </div>
-            @if (auth.isCoordenador()) {
-            <div class="meta-card-footer">
-                <a [routerLink]="['/metas/editar', meta.id]" class="btn btn-edit">
-                    ✎ Editar
-                </a>
-                <button (click)="deletarMeta(meta)" class="btn btn-delete">
-                    🗑 Excluir
-                </button>
-            </div>
-            }
-        </div>
+        <p-card styleClass="meta-card-prime">
+            <ng-template pTemplate="content">
+                <div class="meta-card-header-v2">
+                    <div class="header-info-group">
+                        <span class="setor-badge" [title]="'Setor: ' + (meta.setorNome || 'N/A')">
+                            <i class="material-icons badge-icon">domain</i> {{ meta.setorNome || 'N/A' }}
+                        </span>
+                        <p-tag [value]="meta.eixoNome" severity="info" styleClass="text-xs"></p-tag>
+                    </div>
+                    <span class="status-badge" [class]="getStatusBadgeClass(meta.status)">
+                        {{ formatStatus(meta.status) }}
+                    </span>
+                </div>
+                
+                <h3 class="meta-title-v2" [title]="meta.titulo">{{ meta.titulo }}</h3>
+                <p class="meta-subtitle-v2">Referência: {{ meta.artigo || '-' }}</p>
+                
+                <div class="meta-metrics-v2">
+                    <div class="metric-item" title="Pontos aplicáveis">
+                        <i class="material-icons metric-icon">military_tech</i>
+                        <span class="metric-text">{{ meta.pMaximo | number:'1.0-0' }} Pontos aplicáveis</span>
+                    </div>
+
+                    @if (meta.status === 'EM_ANDAMENTO' || meta.status === 'EM ANDAMENTO') {
+                    <div class="metric-item" title="Teto Estimado">
+                        <i class="material-icons metric-icon">keyboard_double_arrow_up</i>
+                        <span class="metric-text">{{ meta.tetoEstimado | number:'1.0-0' }} Teto Estimado</span>
+                    </div>
+                    <div class="metric-item" title="Estimativa Real">
+                        <i class="material-icons metric-icon">trending_up</i>
+                        <span class="metric-text">{{ meta.estimativaReal | number:'1.0-0' }} Estimativa Real</span>
+                    </div>
+                    }
+
+                    @if (meta.status === 'PARCIALMENTE_CUMPRIDA' || meta.status === 'TOTALMENTE_CUMPRIDA' || meta.status === 'NAO_CUMPRIDA' || meta.status === 'CONCLUÍDA') {
+                    <div class="metric-item" title="Pontos Atingidos">
+                        <i class="material-icons metric-icon">done_all</i>
+                        <span class="metric-text highlight-primary">{{ meta.pontosAtingidos | number:'1.0-0' }} Pontos Atingidos</span>
+                    </div>
+                    }
+
+                    <div class="metric-item" title="Prazo Final">
+                        <i class="material-icons metric-icon opacity-60">event</i>
+                        <span class="metric-text opacity-70">{{ meta.deadline ? (meta.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                @if (auth.isCoordenador()) {
+                <div class="meta-card-footer">
+                    <button (click)="abrirModalVisualizar(meta)" class="btn-icon-action" title="Ver Detalhes">
+                        <i class="material-icons">visibility</i>
+                    </button>
+                    <button (click)="abrirModalEditar(meta)" class="btn-icon-action edit" title="Editar">
+                        <i class="material-icons">edit</i>
+                    </button>
+                    <button (click)="deletarMeta(meta)" class="btn-icon-action delete" title="Excluir">
+                        <i class="material-icons">delete</i>
+                    </button>
+                </div>
+                }
+            </ng-template>
+        </p-card>
         }
     </div>
 
@@ -71,7 +112,7 @@
             ← Anterior
         </button>
         <span class="pagination-info">
-            Página {{ currentPage + 1 }} de {{ totalPages }} ({{ totalElements }} metas)
+            Página {{ currentPage + 1 }} de {{ totalPages }}
         </span>
         <button class="btn btn-pagination" [disabled]="isLast" (click)="proximaPagina()">
             Próximo →
@@ -80,3 +121,11 @@
     }
     }
 </div>
+
+<!-- Modal componente -->
+<app-meta-estrutural-modal 
+    [display]="displayModal" 
+    [metaParaEditar]="metaSelecionada"
+    [readonly]="readonlyModal"
+    (displayChange)="displayModal = $event"
+    (salvoSucesso)="onMetaSalva()"></app-meta-estrutural-modal>

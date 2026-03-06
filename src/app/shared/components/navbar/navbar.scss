@@ -1,14 +1,23 @@
+@use "sass:color";
+
+$primary-color: #003f88;
+$secondary-color: #00296b;
+$tertiary-color: #00509d;
+$accent-color: #fdc500;
+$highlight-color: #ffd500;
+
 .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
-    height: 64px;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    height: 70px;
+    background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
+    border-bottom: 2px solid $accent-color;
 }
 
 .navbar-brand {
@@ -25,21 +34,19 @@
 }
 
 .navbar-logo:hover {
-    transform: scale(1.03);
+    transform: scale(1.02);
 }
 
 .logo-icon {
-    font-size: 1.6rem;
+    font-size: 2rem;
+    color: $accent-color;
 }
 
 .logo-text {
-    font-size: 1.25rem;
-    font-weight: 700;
-    background: linear-gradient(90deg, #e94560, #ff6b6b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 0.5px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
 }
 
 .navbar-links {
@@ -48,87 +55,98 @@
 }
 
 .nav-link {
-    color: #ccd6f6;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    padding: 0.4rem 0.8rem;
-    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
     transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    .link-icon {
+        font-size: 1.2rem;
+    }
 }
 
 .nav-link:hover {
     color: #fff;
-    background: rgba(233, 69, 96, 0.15);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .nav-link.active {
-    color: #e94560;
-    background: rgba(233, 69, 96, 0.1);
+    color: $accent-color;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .navbar-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
 .user-info {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #ccd6f6;
-    font-size: 0.9rem;
+    color: #ffffff;
+    font-size: 0.95rem;
 }
 
 .user-avatar {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
+    color: $accent-color;
 }
 
 .user-name {
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .role-badge {
-    background: linear-gradient(135deg, #e94560, #ff6b6b);
-    color: #fff;
+    background-color: $accent-color;
+    color: $secondary-color;
     font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.15rem 0.5rem;
-    border-radius: 20px;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .btn {
-    padding: 0.45rem 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.25rem;
     border: none;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.25s ease;
-    letter-spacing: 0.3px;
 }
 
 .btn-login {
-    background: linear-gradient(135deg, #e94560, #ff6b6b);
-    color: #fff;
+    background-color: $accent-color;
+    color: $secondary-color;
 }
 
 .btn-login:hover {
-    box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+    background-color: $highlight-color;
     transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .btn-logout {
-    background: transparent;
-    color: #ccd6f6;
-    border: 1px solid rgba(204, 214, 246, 0.3);
+    background: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-logout:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: #e94560;
-    color: #e94560;
+    background: #ef4444;
+    border-color: #ef4444;
 }

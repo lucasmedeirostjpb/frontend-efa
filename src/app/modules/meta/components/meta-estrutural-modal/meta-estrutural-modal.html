@@ -1,0 +1,285 @@
+<p-dialog 
+  [header]="readonly ? '' : (metaParaEditar ? 'Editar Meta' : 'Nova Meta')" 
+  [(visible)]="display" 
+  [modal]="true" 
+  [style]="{ width: '90vw', maxWidth: '850px' }"
+  [draggable]="false"
+  [resizable]="false"
+  [showHeader]="!readonly"
+  [styleClass]="readonly ? 'premium-modal dashboard-modal' : 'premium-modal default-modal'"
+  (onHide)="fechar()">
+
+  <ng-template pTemplate="header">
+      @if (!readonly) {
+          <div class="premium-modal-header">
+              <i class="material-icons header-icon">{{ metaParaEditar ? 'edit_square' : 'add_circle' }}</i>
+              <h2 class="header-title">{{ metaParaEditar ? 'Editar Meta Institucional' : 'Nova Meta Institucional' }}</h2>
+          </div>
+      }
+  </ng-template>
+
+  @if (!readonly) {
+      <form [formGroup]="metaForm">
+        <div class="formgrid grid p-fluid">
+
+          <!-- SEÇÃO DE INFORMAÇÕES TRAVADAS (PARA COORDENADOR EM EDIÇÃO) -->
+          @if (isCoordenadorAndEditing()) {
+            <div class="field col-12 locked-info-banner">
+                <div class="banner-header">
+                    <i class="material-icons">lock</i>
+                    <span>Informações Institucionais (Apenas Leitura)</span>
+                </div>
+                <div class="banner-content-grid">
+                    <div class="banner-item title-span">
+                        <span class="label">Título</span>
+                        <span class="value">{{ metaForm.get('titulo')?.value }}</span>
+                    </div>
+                    <div class="banner-item">
+                        <span class="label">Eixo</span>
+                        <span class="value">{{ getEixoNome(metaForm.get('eixoId')?.value) }}</span>
+                    </div>
+                    <div class="banner-item">
+                        <span class="label">Setor</span>
+                        <span class="value">{{ getSetorNome(metaForm.get('setorId')?.value) }}</span>
+                    </div>
+                    <div class="banner-item">
+                        <span class="label">Artigo</span>
+                        <span class="value">{{ metaForm.get('artigo')?.value || '-' }}</span>
+                    </div>
+                    <div class="banner-item">
+                        <span class="label">Pontos aplicáveis</span>
+                        <span class="value highlight">{{ metaForm.get('pMaximo')?.value | number:'1.0-0' }}</span>
+                    </div>
+                    <div class="banner-item">
+                        <span class="label">Ciclo / Prazo</span>
+                        <span class="value">{{ metaForm.get('anoCiclo')?.value }} | {{ metaForm.get('deadline')?.value ? (metaForm.get('deadline')?.value | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
+                    </div>
+                    @if (metaForm.get('descricao')?.value) {
+                    <div class="banner-item full-width">
+                        <span class="label">Descrição</span>
+                        <span class="value description-text">{{ metaForm.get('descricao')?.value }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+          }
+
+          <!-- Título (Escondido se estiver no banner) -->
+          @if (!isCoordenadorAndEditing()) {
+          <div class="field col-12">
+            <label for="titulo" class="font-semibold" [class.error-label]="metaForm.get('titulo')?.invalid && metaForm.get('titulo')?.touched">
+              Título <span class="required-asterisk">*</span>
+            </label>
+            <span class="p-input-icon-left w-full">
+              <input pInputText id="titulo" formControlName="titulo" placeholder="Digite o título da meta" class="w-full" />
+            </span>
+            @if (metaForm.get('titulo')?.invalid && metaForm.get('titulo')?.touched) {
+              <small class="error-text"><i class="material-icons error-icon">error</i> O título é obrigatório.</small>
+            }
+          </div>
+
+          <!-- Descrição -->
+          <div class="field col-12">
+            <label for="descricao" class="font-semibold">Descrição</label>
+            <textarea pTextarea id="descricao" formControlName="descricao" rows="3" placeholder="Detalhes adicionais da meta" class="w-full"></textarea>
+          </div>
+          }
+
+          <!-- Agrupamento Estrutural (Apenas no cadastro ou ADMIN) -->
+          @if (!isCoordenadorAndEditing()) {
+          <div class="field col-12">
+              <h3 class="section-title">
+                  <i class="material-icons">account_tree</i> Classificação Estrutural
+              </h3>
+          </div>
+
+          <!-- Eixo ID -->
+          <div class="field col-12 md:col-6">
+            <label for="eixoId" class="font-semibold" [class.error-label]="metaForm.get('eixoId')?.invalid && metaForm.get('eixoId')?.touched">
+              Eixo Temático <span class="required-asterisk">*</span>
+            </label>
+            <p-select [options]="eixos" formControlName="eixoId" optionLabel="nome" optionValue="id" placeholder="Selecione um Eixo" styleClass="w-full" class="w-full"></p-select>
+          </div>
+
+          <!-- Setor ID -->
+          <div class="field col-12 md:col-6">
+            <label for="setorId" class="font-semibold" [class.error-label]="metaForm.get('setorId')?.invalid && metaForm.get('setorId')?.touched">
+              Setor Responsável <span class="required-asterisk">*</span>
+            </label>
+            <p-select [options]="setores" formControlName="setorId" optionLabel="nome" optionValue="id" placeholder="Selecione um Setor" styleClass="w-full" class="w-full"></p-select>
+          </div>
+
+          <!-- Artigo -->
+          <div class="field col-12 md:col-6">
+            <label for="artigo" class="font-semibold">Artigo (Referência)</label>
+            <input pInputText id="artigo" formControlName="artigo" placeholder="Ex: Art. 5º" class="w-full" />
+          </div>
+          }
+
+          <!-- Status -->
+          <div class="field col-12 md:col-6" [class.md:offset-6]="isCoordenadorAndEditing()">
+            <label for="status" class="font-semibold">Status <span class="required-asterisk">*</span></label>
+            <p-select id="status" [options]="statusOptions" formControlName="status" placeholder="Selecione..." styleClass="w-full" class="w-full"></p-select>
+          </div>
+
+          <!-- Agrupamento Prazos (Apenas no cadastro) -->
+          @if (!isCoordenadorAndEditing()) {
+          <div class="field col-12">
+              <h3 class="section-title">
+                  <i class="material-icons">event</i> Ciclo e Prazos
+              </h3>
+          </div>
+
+          <div class="field col-12 md:col-6">
+            <label for="anoCiclo" class="font-semibold">Ano do Ciclo <span class="required-asterisk">*</span></label>
+            <p-inputNumber inputId="anoCiclo" formControlName="anoCiclo" [useGrouping]="false" [minFractionDigits]="0" [maxFractionDigits]="0" styleClass="w-full"></p-inputNumber>
+          </div>
+
+          <div class="field col-12 md:col-6">
+            <label for="deadline" class="font-semibold">Deadline (Prazo Legal)</label>
+            <p-datepicker inputId="deadline" formControlName="deadline" dateFormat="dd/mm/yy" [showIcon]="true" placeholder="Selecione uma data" styleClass="w-full" class="w-full"></p-datepicker>
+          </div>
+          }
+
+          <!-- Agrupamento Pontuação -->
+          <div class="field col-12">
+              <h3 class="section-title">
+                  <i class="material-icons">functions</i> Execução e Resultados
+              </h3>
+          </div>
+
+          <!-- Pontos Aplicáveis (Sempre mostrado mas travado no banner se coord editando) -->
+          @if (!isCoordenadorAndEditing()) {
+          <div class="field col-12 md:col-6">
+            <label for="pMaximo" class="font-semibold">Pontos aplicáveis <span class="required-asterisk">*</span></label>
+            <p-inputNumber inputId="pMaximo" formControlName="pMaximo" [minFractionDigits]="0" [maxFractionDigits]="0" [readonly]="!!metaParaEditar" placeholder="0" styleClass="w-full"></p-inputNumber>
+          </div>
+          }
+
+          @if (metaForm.get('status')?.value === 'EM_ANDAMENTO') {
+          <div class="field col-12 md:col-6">
+            <label for="tetoEstimado" class="font-semibold">Teto Estimado</label>
+            <p-inputNumber inputId="tetoEstimado" formControlName="tetoEstimado" [minFractionDigits]="0" [maxFractionDigits]="0" placeholder="0" styleClass="w-full"></p-inputNumber>
+          </div>
+
+          <div class="field col-12 md:col-6">
+            <label for="estimativaReal" class="font-semibold">Estimativa Real</label>
+            <p-inputNumber inputId="estimativaReal" formControlName="estimativaReal" [minFractionDigits]="0" [maxFractionDigits]="0" placeholder="0" styleClass="w-full"></p-inputNumber>
+          </div>
+          }
+
+          @if (metaForm.get('status')?.value === 'PARCIALMENTE_CUMPRIDA' || metaForm.get('status')?.value === 'TOTALMENTE_CUMPRIDA' || metaForm.get('status')?.value === 'NAO_CUMPRIDA') {
+          <div class="field col-12 md:col-6">
+            <label for="pontosAtingidos" class="font-semibold">Pontos Atingidos</label>
+            <p-inputNumber inputId="pontosAtingidos" formControlName="pontosAtingidos" [minFractionDigits]="0" [maxFractionDigits]="0" placeholder="0" styleClass="w-full"></p-inputNumber>
+          </div>
+          }
+
+        </div>
+      </form>
+  } @else {
+      <!-- VISÃO "DASHBOARD" APENAS LEITURA -->
+      @if (metaParaEditar) {
+        <div class="readonly-dashboard relative">
+             <button class="close-dashboard-btn" (click)="fechar()">
+                <i class="material-icons">close</i>
+             </button>
+
+             <div class="dash-header">
+                <div class="dash-title-section">
+                    <h2 class="dash-title">{{ metaParaEditar.titulo }}</h2>
+                    <div class="dash-subtitle">
+                        <span class="dash-artigo">{{ metaParaEditar.artigo || '-' }}</span>
+                        <span class="status-badge" [class]="getStatusBadgeClass(metaParaEditar.status)">
+                            {{ formatStatus(metaParaEditar.status) }}
+                        </span>
+                    </div>
+                </div>
+             </div>
+
+             <div class="info-box-grid">
+                <div class="info-item">
+                    <span class="info-label">Setor</span>
+                    <span class="info-value uppercase">{{ getSetorNome(metaParaEditar.setorId) }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Prazo</span>
+                    <span class="info-value">{{ metaParaEditar.deadline ? (metaParaEditar.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
+                </div>
+                 <div class="info-item">
+                    <span class="info-label">Pontos aplicáveis</span>
+                    <span class="info-value dashboard-bold dashboard-xl">{{ metaParaEditar.pMaximo | number:'1.0-0' }}</span>
+                 </div>
+              </div>
+
+              @if (metaParaEditar.status === 'EM_ANDAMENTO') {
+              <h3 class="section-title">Prestação de Contas (Consulta)</h3>
+              <div class="estimates-grid">
+                 <div class="estimate-card min">
+                     <div class="estimate-header">
+                         <span class="estimate-title">ESTIMATIVA REAL</span>
+                         <span class="estimate-badge min-badge">Bem Encaminhados</span>
+                     </div>
+                     <div class="estimate-value">
+                         <span class="big-number">{{ metaParaEditar.estimativaReal | number:'1.0-0' }}</span> <span class="pts">pts</span>
+                     </div>
+                 </div>
+
+                 <div class="estimate-card max">
+                     <div class="estimate-header">
+                         <span class="estimate-title">TETO ESTIMADO (MÁXIMA)</span>
+                         <span class="estimate-badge max-badge">Máximo Possível</span>
+                     </div>
+                     <div class="estimate-value">
+                         <span class="big-number">{{ metaParaEditar.tetoEstimado | number:'1.0-0' }}</span> <span class="pts">pts</span>
+                     </div>
+                 </div>
+              </div>
+              }
+
+              @if (metaParaEditar.status === 'PARCIALMENTE_CUMPRIDA' || metaParaEditar.status === 'TOTALMENTE_CUMPRIDA' || metaParaEditar.status === 'NAO_CUMPRIDA') {
+              <h3 class="section-title dashboard-mt-4">Resultados Oficiais</h3>
+              <div class="info-box-grid detailed">
+                 <div class="info-item">
+                    <span class="info-label">Eixo Temático</span>
+                    <span class="info-value custom-uppercase">{{ getEixoNome(metaParaEditar.eixoId) }}</span>
+                 </div>
+                 <div class="info-item">
+                    <span class="info-label">Ano do Ciclo</span>
+                    <span class="info-value">{{ metaParaEditar.anoCiclo }}</span>
+                 </div>
+                 <div class="info-item">
+                    <span class="info-label">Pontos Atingidos</span>
+                    <span class="info-value dashboard-bold dashboard-primary">{{ metaParaEditar.pontosAtingidos | number:'1.0-0' }}</span>
+                 </div>
+              </div>
+              }
+
+              @if (metaParaEditar.descricao) {
+                <div class="dashboard-description">
+                    <span class="info-label">Descrição Adicional</span>
+                    <p>{{ metaParaEditar.descricao }}</p>
+                </div>
+              }
+         </div>
+       }
+   }
+
+  <ng-template pTemplate="footer">
+      @if (!readonly) {
+        <div class="modal-footer">
+            <button class="btn btn-outline" (click)="fechar()">
+                <i class="material-icons btn-icon">close</i> Cancelar
+            </button>
+            <button class="btn btn-primary" style="margin-left: 1rem;" [disabled]="isSaving" [class.btn-saving]="isSaving" (click)="salvar()">
+                @if (isSaving) {
+                    <i class="material-icons btn-icon spin-icon">autorenew</i> Salvando...
+                } @else {
+                    <i class="material-icons btn-icon">check</i> Salvar Meta
+                }
+            </button>
+        </div>
+      }
+  </ng-template>
+
+</p-dialog>
