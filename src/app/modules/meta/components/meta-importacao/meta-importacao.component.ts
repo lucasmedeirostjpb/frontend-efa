@@ -37,6 +37,7 @@ export class MetaImportacaoComponent {
   etapa: 'upload' | 'mapeamento' = 'upload';
   colunasPlanilha: string[] = [];
   dadosMapeamento: ItemMapeamento[] = [];
+  anoCicloGlobal: number = new Date().getFullYear();
   
   camposSistema = [
     { label: 'Título da Meta', value: 'titulo' },
@@ -44,11 +45,8 @@ export class MetaImportacaoComponent {
     { label: 'Eixo Temático', value: 'eixoNome' },
     { label: 'Setor Responsável', value: 'setorNome' },
     { label: 'Artigo', value: 'artigo' },
-    { label: 'Ano do Ciclo', value: 'anoCiclo' },
     { label: 'Prazo (Deadline)', value: 'deadline' },
     { label: 'Pontos Máximos', value: 'pMaximo' },
-    { label: 'Nível de Dificuldade', value: 'nivelDificuldade' },
-    { label: 'Evidências Auditoria', value: 'evidenciasAuditoria' },
     { label: 'Observações', value: 'observacoes' }
   ];
 
@@ -104,16 +102,24 @@ export class MetaImportacaoComponent {
   }
 
   confirmarImportacao() {
-    // Retorna o dicionário de mapeamento invertido: Campo Sistema -> Coluna Planilha
-    const mapeamento: { [key: string]: string } = {};
+    // Retorna o dicionário de mapeamento: Campo Sistema -> Coluna Planilha
+    const mapeamento: any = {
+      campos: {},
+      defaults: {
+        anoCiclo: this.anoCicloGlobal,
+        status: 'PENDENTE',
+        nivelDificuldade: 'SEM_DIFICULDADES',
+        evidenciasAuditoria: ''
+      }
+    };
     
     this.dadosMapeamento.forEach(item => {
       if (item.colunaPlanilha) {
-        mapeamento[item.campo] = item.colunaPlanilha;
+        mapeamento.campos[item.campo] = item.colunaPlanilha;
       }
     });
 
-    console.log('Mapeamento Final (Sistema -> Planilha):', mapeamento);
+    console.log('Mapeamento Final:', mapeamento);
     this.messageService.add({ 
       severity: 'success', 
       summary: 'Mapeamento Concluído', 

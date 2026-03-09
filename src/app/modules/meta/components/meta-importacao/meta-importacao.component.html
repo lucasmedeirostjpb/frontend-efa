@@ -27,7 +27,10 @@
     @if (etapa === 'mapeamento') {
       <div class="flex flex-column gap-4">
         <div class="flex justify-content-between align-items-center">
-          <h4 class="text-xl font-medium">Mapeamento de Colunas</h4>
+          <div class="flex flex-column gap-1">
+            <h4 class="text-xl font-medium m-0">Mapeamento de Colunas</h4>
+            <p class="text-sm text-color-secondary">Defina o ano do ciclo e as colunas correspondentes</p>
+          </div>
           <div class="flex gap-2">
             <p-button 
                 label="Voltar" 
@@ -42,6 +45,17 @@
                 (onClick)="confirmarImportacao()">
             </p-button>
           </div>
+        </div>
+
+        <div class="flex align-items-center gap-3 p-3 surface-ground border-round">
+          <label for="anoCiclo" class="font-bold">Ano do Ciclo para todas as metas:</label>
+          <input 
+            pInputText 
+            id="anoCiclo" 
+            type="number" 
+            [(ngModel)]="anoCicloGlobal" 
+            class="w-8rem" 
+            placeholder="Ex: 2025" />
         </div>
 
         <p-table [value]="dadosMapeamento" [responsiveLayout]="'scroll'" styleClass="p-datatable-striped">
