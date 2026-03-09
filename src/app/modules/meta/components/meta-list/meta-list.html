@@ -42,10 +42,12 @@
             <ng-template pTemplate="content">
                 <div class="meta-card-header-v2">
                     <div class="header-info-group">
+                        <span class="eixo-badge" [title]="'Eixo: ' + (meta.eixoNome || 'N/A')">
+                            <i class="material-icons badge-icon">account_tree</i> {{ meta.eixoNome || 'N/A' }}
+                        </span>
                         <span class="setor-badge" [title]="'Setor: ' + (meta.setorNome || 'N/A')">
                             <i class="material-icons badge-icon">domain</i> {{ meta.setorNome || 'N/A' }}
                         </span>
-                        <p-tag [value]="meta.eixoNome" severity="info" styleClass="text-xs"></p-tag>
                     </div>
                     <span class="status-badge" [class]="getStatusBadgeClass(meta.status)">
                         {{ formatStatus(meta.status) }}

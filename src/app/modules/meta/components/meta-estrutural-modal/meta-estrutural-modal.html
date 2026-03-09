@@ -240,6 +240,10 @@
 
              <div class="info-box-grid">
                 <div class="info-item">
+                    <span class="info-label">Eixo Temático</span>
+                    <span class="info-value custom-uppercase">{{ getEixoNome(metaParaEditar.eixoId) }}</span>
+                </div>
+                <div class="info-item">
                     <span class="info-label">Setor</span>
                     <span class="info-value uppercase">{{ getSetorNome(metaParaEditar.setorId) }}</span>
                 </div>
@@ -247,10 +251,10 @@
                     <span class="info-label">Prazo</span>
                     <span class="info-value">{{ metaParaEditar.deadline ? (metaParaEditar.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
                 </div>
-                 <div class="info-item">
-                    <span class="info-label">Pontos aplicáveis</span>
+                <div class="info-item">
+                    <span class="info-label">Pontos Aplicáveis</span>
                     <span class="info-value dashboard-bold dashboard-xl">{{ metaParaEditar.pMaximo | number:'1.0-0' }}</span>
-                 </div>
+                </div>
               </div>
 
               @if (metaParaEditar.status === 'EM_ANDAMENTO') {
@@ -281,10 +285,6 @@
               @if (metaParaEditar.status === 'PARCIALMENTE_CUMPRIDA' || metaParaEditar.status === 'TOTALMENTE_CUMPRIDA' || metaParaEditar.status === 'NAO_CUMPRIDA') {
               <h3 class="section-title dashboard-mt-4">Resultados Oficiais</h3>
               <div class="info-box-grid detailed">
-                 <div class="info-item">
-                    <span class="info-label">Eixo Temático</span>
-                    <span class="info-value custom-uppercase">{{ getEixoNome(metaParaEditar.eixoId) }}</span>
-                 </div>
                  <div class="info-item">
                     <span class="info-label">Ano do Ciclo</span>
                     <span class="info-value">{{ metaParaEditar.anoCiclo }}</span>
