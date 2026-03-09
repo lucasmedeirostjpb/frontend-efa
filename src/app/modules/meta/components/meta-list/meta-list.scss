@@ -278,7 +278,7 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .p-card-content {
-        padding: 1.25rem 1.5rem 0.5rem;
+        padding: 1.5rem 2rem 0.75rem;
         flex-grow: 1;
     }
 }
@@ -297,6 +297,7 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         flex-direction: row;
         justify-content: space-between;
         align-items: flex-start;
+        flex-wrap: wrap;
     }
 
     .header-info-group {
@@ -349,6 +350,8 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-transform: uppercase;
         letter-spacing: 0.05em;
         align-self: flex-start;
+        flex-shrink: 0;
+        white-space: nowrap;
 
         &.bg-green-100 {
             background: linear-gradient(135deg, rgba($accent-color, 0.15) 0%, rgba($highlight-color, 0.2) 100%);
