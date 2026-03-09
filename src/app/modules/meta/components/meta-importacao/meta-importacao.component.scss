@@ -1,0 +1,48 @@
+:host {
+  display: block;
+}
+
+.p-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+h3 {
+  margin: 0;
+  color: var(--text-color);
+}
+
+h4 {
+  margin: 0;
+  color: var(--text-color);
+}
+
+:host ::v-deep {
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      background-color: var(--surface-secondary);
+      color: var(--text-color-secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 1.25rem 1rem;
+    }
+
+    .p-datatable-tbody > tr > td {
+      padding: 1.25rem 1rem;
+    }
+  }
+
+  .p-select {
+    width: 100%;
+  }
+
+  .p-fileupload-basic {
+    display: inline-flex;
+  }
+}
+
+.pi-file-excel {
+  color: #217346; // Cor padrão do Excel
+}

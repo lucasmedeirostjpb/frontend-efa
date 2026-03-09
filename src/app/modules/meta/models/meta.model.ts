@@ -15,6 +15,9 @@ export interface Meta {
   estimativaReal: number;
   tetoEstimado: number;
   pontosAtingidos: number;
+  nivelDificuldade?: string;
+  evidenciasAuditoria?: string;
+  observacoes?: string;
 }
 
 /**

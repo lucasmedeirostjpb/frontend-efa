@@ -22,45 +22,41 @@
       <form [formGroup]="metaForm">
         <div class="formgrid grid p-fluid">
 
-          <!-- SEÇÃO DE INFORMAÇÕES TRAVADAS (PARA COORDENADOR EM EDIÇÃO) -->
+          <!-- HERO CARD — Informações da Meta (Coordenador em edição) -->
           @if (isCoordenadorAndEditing()) {
-            <div class="field col-12 locked-info-banner">
-                <div class="banner-header">
-                    <i class="material-icons">lock</i>
-                    <span>Informações Institucionais (Apenas Leitura)</span>
+            <div class="field col-12 meta-hero-card">
+                <div class="hero-top">
+                    <h3 class="hero-title">{{ metaForm.get('titulo')?.value }}</h3>
+                    <div class="hero-pontos">
+                        <span class="pontos-number">{{ metaForm.get('pMaximo')?.value | number:'1.0-0' }}</span>
+                        <span class="pontos-label">pts</span>
+                    </div>
                 </div>
-                <div class="banner-content-grid">
-                    <div class="banner-item title-span">
-                        <span class="label">Título</span>
-                        <span class="value">{{ metaForm.get('titulo')?.value }}</span>
-                    </div>
-                    <div class="banner-item">
-                        <span class="label">Eixo</span>
-                        <span class="value">{{ getEixoNome(metaForm.get('eixoId')?.value) }}</span>
-                    </div>
-                    <div class="banner-item">
-                        <span class="label">Setor</span>
-                        <span class="value">{{ getSetorNome(metaForm.get('setorId')?.value) }}</span>
-                    </div>
-                    <div class="banner-item">
-                        <span class="label">Artigo</span>
-                        <span class="value">{{ metaForm.get('artigo')?.value || '-' }}</span>
-                    </div>
-                    <div class="banner-item">
-                        <span class="label">Pontos aplicáveis</span>
-                        <span class="value highlight">{{ metaForm.get('pMaximo')?.value | number:'1.0-0' }}</span>
-                    </div>
-                    <div class="banner-item">
-                        <span class="label">Ciclo / Prazo</span>
-                        <span class="value">{{ metaForm.get('anoCiclo')?.value }} | {{ metaForm.get('deadline')?.value ? (metaForm.get('deadline')?.value | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
-                    </div>
-                    @if (metaForm.get('descricao')?.value) {
-                    <div class="banner-item full-width">
-                        <span class="label">Descrição</span>
-                        <span class="value description-text">{{ metaForm.get('descricao')?.value }}</span>
-                    </div>
+
+                <div class="hero-chips">
+                    <span class="hero-chip">
+                        <i class="material-icons">account_tree</i>
+                        {{ getEixoNome(metaForm.get('eixoId')?.value) }}
+                    </span>
+                    <span class="hero-chip">
+                        <i class="material-icons">domain</i>
+                        {{ getSetorNome(metaForm.get('setorId')?.value) }}
+                    </span>
+                    @if (metaForm.get('artigo')?.value) {
+                    <span class="hero-chip accent">
+                        <i class="material-icons">gavel</i>
+                        {{ metaForm.get('artigo')?.value }}
+                    </span>
                     }
+                    <span class="hero-chip subtle">
+                        <i class="material-icons">event</i>
+                        {{ metaForm.get('anoCiclo')?.value }} · {{ metaForm.get('deadline')?.value ? (metaForm.get('deadline')?.value | date:'dd/MM/yyyy') : 'Sem prazo' }}
+                    </span>
                 </div>
+
+                @if (metaForm.get('descricao')?.value) {
+                <p class="hero-description">{{ metaForm.get('descricao')?.value }}</p>
+                }
             </div>
           }
 
@@ -141,14 +137,15 @@
           </div>
           }
 
-          <!-- Agrupamento Pontuação -->
+          <!-- Agrupamento Pontuação (escondido se PENDENTE ou NAO_SE_APLICA) -->
+          @if (metaForm.get('status')?.value !== 'PENDENTE' && metaForm.get('status')?.value !== 'NAO_SE_APLICA') {
           <div class="field col-12">
               <h3 class="section-title">
                   <i class="material-icons">functions</i> Execução e Resultados
               </h3>
           </div>
 
-          <!-- Pontos Aplicáveis (Sempre mostrado mas travado no banner se coord editando) -->
+          <!-- Pontos Aplicáveis -->
           @if (!isCoordenadorAndEditing()) {
           <div class="field col-12 md:col-6">
             <label for="pMaximo" class="font-semibold">Pontos aplicáveis <span class="required-asterisk">*</span></label>
@@ -174,6 +171,50 @@
             <p-inputNumber inputId="pontosAtingidos" formControlName="pontosAtingidos" [minFractionDigits]="0" [maxFractionDigits]="0" placeholder="0" styleClass="w-full"></p-inputNumber>
           </div>
           }
+          }
+
+          <!-- Seção: Auditoria e Monitoramento -->
+          <div class="field col-12">
+              <h3 class="section-title">
+                  <i class="material-icons">policy</i> Auditoria e Monitoramento
+              </h3>
+          </div>
+
+          <!-- Nível de Dificuldade -->
+          <div class="field col-12 md:col-6">
+            <label for="nivelDificuldade" class="font-semibold">Nível de Dificuldade</label>
+            <p-select id="nivelDificuldade" [options]="nivelDificuldadeOptions" formControlName="nivelDificuldade" placeholder="Selecione..." styleClass="w-full" class="w-full"></p-select>
+          </div>
+
+          <!-- Evidências para Auditoria -->
+          <div class="field col-12">
+            <label for="evidenciasAuditoria" class="font-semibold" [class.error-label]="metaForm.get('evidenciasAuditoria')?.invalid && metaForm.get('evidenciasAuditoria')?.touched">
+              Evidências para Auditoria
+              @if (isStatusConclusao()) {
+                <span class="required-asterisk">*</span>
+              }
+            </label>
+            <textarea pTextarea id="evidenciasAuditoria" formControlName="evidenciasAuditoria" rows="4" placeholder="Descreva as evidências que comprovam o cumprimento da meta..." class="w-full"></textarea>
+            @if (isStatusConclusao()) {
+              <small class="char-hint">
+                <i class="material-icons" style="font-size: 0.85rem; vertical-align: middle;">info</i>
+                Mínimo de 20 caracteres obrigatórios para status de conclusão.
+              </small>
+            }
+            @if (metaForm.get('evidenciasAuditoria')?.invalid && metaForm.get('evidenciasAuditoria')?.touched) {
+              @if (metaForm.get('evidenciasAuditoria')?.errors?.['required']) {
+                <small class="error-text"><i class="material-icons error-icon">error</i> As evidências são obrigatórias para o status selecionado.</small>
+              } @else if (metaForm.get('evidenciasAuditoria')?.errors?.['minlength']) {
+                <small class="error-text"><i class="material-icons error-icon">error</i> As evidências devem ter no mínimo 20 caracteres (atual: {{ metaForm.get('evidenciasAuditoria')?.value?.length || 0 }}).</small>
+              }
+            }
+          </div>
+
+          <!-- Observações -->
+          <div class="field col-12">
+            <label for="observacoes" class="font-semibold">Observações</label>
+            <textarea pTextarea id="observacoes" formControlName="observacoes" rows="3" placeholder="Observações adicionais, anotações internas..." class="w-full"></textarea>
+          </div>
 
         </div>
       </form>

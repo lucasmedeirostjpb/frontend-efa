@@ -1,24 +1,45 @@
 @use "sass:color";
 
+// ═══════════════════════════════════════════════════════════════
+// DESIGN TOKENS
+// ═══════════════════════════════════════════════════════════════
 $primary-color: #003f88;
 $secondary-color: #00296b;
 $tertiary-color: #00509d;
 $accent-color: #fdc500;
 $highlight-color: #ffd500;
 
+// ═══════════════════════════════════════════════════════════════
+// NAVBAR — Premium Dark Header
+// ═══════════════════════════════════════════════════════════════
+
 .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
-    height: 70px;
-    background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    height: 64px;
+    background: linear-gradient(135deg, darken($secondary-color, 4%) 0%, $primary-color 40%, $tertiary-color 100%);
+    box-shadow: 0 4px 20px rgba($secondary-color, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
-    border-bottom: 2px solid $accent-color;
+    border-bottom: none;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, $accent-color 0%, $highlight-color 50%, transparent 100%);
+    }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// BRAND
+// ═══════════════════════════════════════════════════════════════
 
 .navbar-brand {
     display: flex;
@@ -30,44 +51,50 @@ $highlight-color: #ffd500;
     align-items: center;
     gap: 0.6rem;
     text-decoration: none;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .navbar-logo:hover {
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
 .logo-icon {
-    font-size: 2rem;
+    font-size: 1.75rem;
     color: $accent-color;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .logo-text {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #ffffff;
     letter-spacing: -0.02em;
 }
 
+// ═══════════════════════════════════════════════════════════════
+// NAV LINKS
+// ═══════════════════════════════════════════════════════════════
+
 .navbar-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 0.5rem;
 }
 
 .nav-link {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.75);
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    padding: 0.5rem 1rem;
+    padding: 0.45rem 0.9rem;
     border-radius: 0.5rem;
     transition: all 0.25s ease;
     display: flex;
     align-items: center;
     gap: 0.4rem;
+    position: relative;
 
     .link-icon {
-        font-size: 1.2rem;
+        font-size: 1.15rem;
     }
 }
 
@@ -78,13 +105,29 @@ $highlight-color: #ffd500;
 
 .nav-link.active {
     color: $accent-color;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.25);
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 2px;
+        background: $accent-color;
+        border-radius: 1px;
+    }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// RIGHT SECTION — User Info
+// ═══════════════════════════════════════════════════════════════
 
 .navbar-actions {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .user-info {
@@ -92,11 +135,11 @@ $highlight-color: #ffd500;
     align-items: center;
     gap: 0.5rem;
     color: #ffffff;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .user-avatar {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     color: $accent-color;
 }
 
@@ -105,48 +148,55 @@ $highlight-color: #ffd500;
 }
 
 .role-badge {
-    background-color: $accent-color;
+    background: linear-gradient(135deg, $accent-color 0%, $highlight-color 100%);
     color: $secondary-color;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 800;
-    padding: 0.2rem 0.5rem;
+    padding: 0.2rem 0.6rem;
     border-radius: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    letter-spacing: 0.06em;
+    box-shadow: 0 2px 6px rgba($accent-color, 0.3);
 }
+
+// ═══════════════════════════════════════════════════════════════
+// BUTTONS — Login & Logout
+// ═══════════════════════════════════════════════════════════════
 
 .btn {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.5rem 1.25rem;
+    padding: 0.45rem 1.15rem;
     border: none;
     border-radius: 0.5rem;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.25s ease;
 }
 
 .btn-login {
-    background-color: $accent-color;
+    background: linear-gradient(135deg, $accent-color 0%, $highlight-color 100%);
     color: $secondary-color;
+    box-shadow: 0 2px 8px rgba($accent-color, 0.3);
 }
 
 .btn-login:hover {
-    background-color: $highlight-color;
+    filter: brightness(1.08);
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 14px rgba($accent-color, 0.4);
 }
 
 .btn-logout {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
 }
 
 .btn-logout:hover {
-    background: #ef4444;
-    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.85);
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }

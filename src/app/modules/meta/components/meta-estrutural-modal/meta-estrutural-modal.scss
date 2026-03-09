@@ -1,77 +1,177 @@
 @use "sass:color";
 
+// ═══════════════════════════════════════════════════════════════
+// DESIGN TOKENS — Paleta Institucional
+// ═══════════════════════════════════════════════════════════════
 $primary-color: #003f88;
 $secondary-color: #00296b;
 $tertiary-color: #00509d;
 $accent-color: #fdc500;
 $highlight-color: #ffd500;
-$text-main: #334155;
+$text-main: #1e293b;
+$text-secondary: #475569;
 $text-light: #64748b;
-$error-color: #ef4444;
+$text-muted: #94a3b8;
+$error-color: #dc2626;
+$success-color: #16a34a;
+$bg-body: #f0f4f8;
 $bg-light: #f8fafc;
+$bg-white: #ffffff;
 $border-color: #e2e8f0;
+$border-light: #f1f5f9;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+$shadow-lg: 0 20px 60px -15px rgba($secondary-color, 0.25), 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+$radius-sm: 0.5rem;
+$radius-md: 0.75rem;
+$radius-lg: 1rem;
+$radius-xl: 1.25rem;
+$transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ═══════════════════════════════════════════════════════════════
+// PREMIUM MODAL — PrimeNG Dialog Overrides
+// ═══════════════════════════════════════════════════════════════
 
 :host ::ng-deep .premium-modal {
     .p-dialog-header {
-        background: linear-gradient(135deg, $bg-light 0%, #ffffff 100%);
-        border-bottom: 1px solid $border-color;
+        background: linear-gradient(135deg, $secondary-color 0%, $primary-color 50%, $tertiary-color 100%);
+        border-bottom: 3px solid $accent-color;
         padding: 1.5rem 2rem;
     }
 
     .p-dialog-content {
-        padding: 2rem;
-        background-color: #ffffff;
+        padding: 0;
+        background-color: $bg-white;
     }
 
     .p-dialog-footer {
         border-top: 1px solid $border-color;
         padding: 1.25rem 2rem;
-        background-color: $bg-light;
+        background: linear-gradient(180deg, $bg-light 0%, darken($bg-light, 2%) 100%);
+    }
+
+    // ─── PrimeNG Input Overrides ───
+    .p-inputtext, .p-textarea, textarea {
+        border: 1.5px solid $border-color;
+        border-radius: $radius-sm;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        color: $text-main;
+        background: $bg-white;
+        transition: $transition-fast;
+
+        &:hover:not(:disabled):not(:focus) {
+            border-color: #cbd5e1;
+        }
+
+        &:focus, &:focus-visible {
+            border-color: $tertiary-color;
+            box-shadow: 0 0 0 3px rgba($tertiary-color, 0.12);
+            outline: none;
+        }
+
+        &::placeholder {
+            color: $text-muted;
+            font-weight: 400;
+        }
+
+        &:disabled, &[readonly] {
+            background-color: $border-light;
+            color: $text-light;
+            cursor: not-allowed;
+            border-color: $border-color;
+        }
+    }
+
+    // ─── PrimeNG Select/Dropdown Overrides ───
+    .p-select, .p-dropdown {
+        border: 1.5px solid $border-color !important;
+        border-radius: $radius-sm !important;
+        transition: $transition-fast;
+
+        &:hover:not(.p-disabled) {
+            border-color: #cbd5e1 !important;
+        }
+
+        &.p-focus, &:focus-within {
+            border-color: $tertiary-color !important;
+            box-shadow: 0 0 0 3px rgba($tertiary-color, 0.12) !important;
+        }
+    }
+
+    // ─── PrimeNG InputNumber Overrides ───
+    .p-inputnumber {
+        .p-inputtext {
+            border: 1.5px solid $border-color;
+            border-radius: $radius-sm;
+        }
+    }
+
+    // ─── PrimeNG DatePicker Overrides ───
+    .p-datepicker {
+        .p-inputtext {
+            border: 1.5px solid $border-color;
+            border-radius: $radius-sm;
+        }
     }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// MODAL HEADER — Premium Gradient
+// ═══════════════════════════════════════════════════════════════
 
 .premium-modal-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.85rem;
 
     .header-icon {
-        color: $primary-color;
-        font-size: 2rem;
+        color: $accent-color;
+        font-size: 1.75rem;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
     }
 
     .header-title {
-        color: $primary-color;
-        font-size: 1.5rem;
-        font-weight: 800;
+        color: #ffffff;
+        font-size: 1.35rem;
+        font-weight: 700;
         margin: 0;
         letter-spacing: -0.01em;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// FORM CONTENT — Layout & Spacing
+// ═══════════════════════════════════════════════════════════════
 
+.formgrid {
+    padding: 2.5rem 2rem 2.5rem;
 
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    
-    @media (min-width: 768px) {
-        grid-template-columns: repeat(2, 1fr);
+    .field {
+        margin-bottom: 0.5rem;
     }
 }
 
 .section-title {
-    font-size: 1.15rem;
+    font-size: 1rem;
     font-weight: 700;
-    color: #003f88;
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e2e8f0;
+    color: $primary-color;
+    margin-top: 2rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, $primary-color 0%, rgba($tertiary-color, 0.3) 50%, transparent 100%) 1;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    letter-spacing: 0.01em;
+
+    .material-icons {
+        font-size: 1.25rem;
+        color: $accent-color;
+    }
 }
 
 .form-group {
@@ -83,65 +183,81 @@ $border-color: #e2e8f0;
     &.full-width {
         grid-column: 1 / -1;
     }
+}
 
-    .font-semibold {
-        font-weight: 600;
-        color: $text-main;
-        font-size: 0.95rem;
-        margin-bottom: 0.5rem;
-        display: inline-block;
+// ═══════════════════════════════════════════════════════════════
+// LABELS & VALIDATION
+// ═══════════════════════════════════════════════════════════════
 
-        &.error-label {
-            color: $error-color;
-        }
-    }
+.font-semibold {
+    font-weight: 600;
+    color: $text-secondary;
+    font-size: 0.875rem;
+    margin-bottom: 0.4rem;
+    display: inline-block;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
 
-    .p-input-icon-left {
-        position: relative;
-        display: block;
-
-        .input-icon {
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .pl-10 {
-            padding-left: 2.5rem !important;
-        }
-    }
-
-    .error-text {
+    &.error-label {
         color: $error-color;
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        font-weight: 500;
-
-        .error-icon {
-            font-size: 1rem;
-        }
     }
 }
 
 .required-asterisk {
-    color: #d32f2f;
+    color: $error-color;
     font-weight: bold;
-    margin-left: 4px;
+    margin-left: 3px;
+    font-size: 1rem;
 }
 
+.error-text {
+    color: $error-color;
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 500;
+    animation: fadeInDown 0.2s ease-out;
 
+    .error-icon {
+        font-size: 0.95rem;
+    }
+}
+
+.char-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: $text-light;
+    font-size: 0.78rem;
+    font-style: italic;
+    margin-top: 0.35rem;
+    padding: 0.3rem 0.6rem;
+    background: rgba($tertiary-color, 0.04);
+    border-radius: $radius-sm;
+    border-left: 2px solid $tertiary-color;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODAL FOOTER — Buttons
+// ═══════════════════════════════════════════════════════════════
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: 0.75rem;
     width: 100%;
 }
 
@@ -149,41 +265,57 @@ $border-color: #e2e8f0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem 1.5rem;
+    padding: 0.7rem 1.5rem;
     font-weight: 600;
-    font-size: 0.95rem;
-    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    border-radius: $radius-sm;
     cursor: pointer;
     border: none;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: $transition-smooth;
+    letter-spacing: 0.01em;
 
     &-primary {
         background: linear-gradient(135deg, $primary-color 0%, $tertiary-color 100%);
         color: white;
-        box-shadow: 0 4px 6px -1px rgba($primary-color, 0.3), 0 2px 4px -1px rgba($primary-color, 0.2);
+        box-shadow: 0 4px 14px -3px rgba($primary-color, 0.4);
 
         &:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba($primary-color, 0.35), 0 4px 6px -2px rgba($primary-color, 0.2);
-            filter: brightness(1.1);
+            box-shadow: 0 8px 25px -5px rgba($primary-color, 0.5);
+            filter: brightness(1.08);
+        }
+
+        &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px -2px rgba($primary-color, 0.4);
+        }
+
+        &:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
         }
     }
 
     &-outline {
-        background-color: #ffffff;
-        border: 1px solid #cbd5e1;
-        color: $text-main;
-        
+        background-color: $bg-white;
+        border: 1.5px solid #cbd5e1;
+        color: $text-secondary;
+
         &:hover {
-            background-color: #f1f5f9;
+            background-color: $bg-light;
             color: $primary-color;
-            border-color: #94a3b8;
+            border-color: $primary-color;
         }
+    }
+
+    &-saving {
+        background: linear-gradient(135deg, $text-light 0%, $text-muted 100%) !important;
+        cursor: wait !important;
     }
 
     .btn-icon {
         margin-right: 0.5rem;
-        font-size: 1.25rem;
+        font-size: 1.15rem;
 
         &.spin-icon {
             animation: spin 1s linear infinite;
@@ -195,19 +327,40 @@ $border-color: #e2e8f0;
     to { transform: rotate(360deg); }
 }
 
-/* =========================================================================
-   DASHBOARD VIEW (READONLY)
-   ========================================================================= */
+// ═══════════════════════════════════════════════════════════════
+// DIALOG VARIANTS — Default & Dashboard
+// ═══════════════════════════════════════════════════════════════
+
+:host ::ng-deep .default-modal {
+    box-shadow: $shadow-lg;
+    border: none !important;
+    border-radius: $radius-xl;
+    overflow: hidden;
+
+    .p-dialog-header {
+        border-top-left-radius: $radius-xl;
+        border-top-right-radius: $radius-xl;
+    }
+
+    .p-dialog-content {
+        overflow-x: hidden;
+    }
+
+    .p-dialog-footer {
+        border-bottom-left-radius: $radius-xl;
+        border-bottom-right-radius: $radius-xl;
+    }
+}
 
 :host ::ng-deep .dashboard-modal {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    border-radius: 1rem;
+    box-shadow: $shadow-lg, 0 0 0 1px rgba(0, 0, 0, 0.05);
+    border-radius: $radius-xl;
     background-color: transparent;
     border: none !important;
 
     .p-dialog-content {
         padding: 0 !important;
-        border-radius: 1rem;
+        border-radius: $radius-xl;
         background-color: transparent;
         overflow-x: hidden;
     }
@@ -219,59 +372,52 @@ $border-color: #e2e8f0;
     }
 }
 
-:host ::ng-deep .default-modal {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    border: none !important;
-    border-radius: 1rem;
-
-    .p-dialog-header {
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
-    }
-
-    .p-dialog-content {
-        overflow-x: hidden;
-    }
-
-    .p-dialog-footer {
-        border-bottom-left-radius: 1rem;
-        border-bottom-right-radius: 1rem;
-    }
-}
-
-/* Escurece a tela ao redor e aplica um leve blur no fundo da janela (backdrop) */
+// ─── Backdrop ───
 :host ::ng-deep .p-dialog-mask {
-    background-color: rgba(15, 23, 42, 0.75) !important; /* Azul bem escuro predominante com transparência */
-    backdrop-filter: blur(4px);
+    background-color: rgba($secondary-color, 0.7) !important;
+    backdrop-filter: blur(8px) saturate(1.2);
 }
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD VIEW (READONLY)
+// ═══════════════════════════════════════════════════════════════
 
 .readonly-dashboard {
     padding: 1.5rem;
     @media (min-width: 640px) {
         padding: 2.5rem;
     }
-    background-color: #fafbfd;
+    background: linear-gradient(180deg, $bg-white 0%, $bg-body 100%);
     position: relative;
-    border-radius: 1rem;
-    border: 1px solid #cbd5e1;
+    border-radius: $radius-xl;
+    border: 1px solid $border-color;
     box-sizing: border-box;
     width: 100%;
-    overflow: hidden; /* Evita que os conteúdos cortem as bordas arredondadas */
+    overflow: hidden;
 
     .close-dashboard-btn {
         position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        background: transparent;
+        top: 1.25rem;
+        right: 1.25rem;
+        background: rgba($text-muted, 0.08);
         border: none;
-        color: #94a3b8;
+        color: $text-muted;
         cursor: pointer;
-        transition: color 0.2s;
-        
-        &:hover { color: #0f172a; }
+        transition: $transition-fast;
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+
+        &:hover {
+            background: rgba($error-color, 0.08);
+            color: $error-color;
+        }
 
         .material-icons {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
         }
     }
 
@@ -281,35 +427,60 @@ $border-color: #e2e8f0;
 
     .dash-title {
         font-size: 1.5rem;
-        font-weight: 700;
-        color: #0f172a;
+        font-weight: 800;
+        color: $secondary-color;
         margin: 0 0 0.5rem 0;
         line-height: 1.3;
-        padding-right: 2rem;
+        padding-right: 3rem;
     }
 
     .dash-subtitle {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.75rem;
         font-size: 0.9rem;
 
         .dash-artigo {
-            color: #64748b;
+            color: $text-light;
             font-weight: 500;
+            padding: 0.15rem 0.5rem;
+            background: $border-light;
+            border-radius: $radius-sm;
         }
 
         .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            font-weight: 700;
+            padding: 0.3rem 0.85rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
 
-            &.bg-green-100 { background-color: $accent-color; color: $secondary-color;}
-            &.bg-yellow-100 { background-color: #fff3cd; color: #856404;}
-            &.bg-blue-100 { background-color: $tertiary-color; color: white;}
-            &.bg-gray-100 { background-color: #f1f5f9; color: #475569;}
+            &.bg-green-100 {
+                background: linear-gradient(135deg, $accent-color 0%, $highlight-color 100%);
+                color: $secondary-color;
+                box-shadow: 0 2px 8px rgba($accent-color, 0.3);
+            }
+            &.bg-yellow-100 {
+                background: #fef3cd;
+                color: #92400e;
+                border: 1px solid #fde68a;
+            }
+            &.bg-blue-100 {
+                background: linear-gradient(135deg, $tertiary-color 0%, $primary-color 100%);
+                color: white;
+                box-shadow: 0 2px 8px rgba($tertiary-color, 0.3);
+            }
+            &.bg-red-100 {
+                background: #fef2f2;
+                color: #b91c1c;
+                border: 1px solid #fecaca;
+            }
+            &.bg-gray-100 {
+                background: $border-light;
+                color: $text-secondary;
+                border: 1px solid $border-color;
+            }
         }
     }
 
@@ -319,38 +490,41 @@ $border-color: #e2e8f0;
         @media (min-width: 640px) {
             flex-direction: row;
         }
-        background-color: #f1f5f9;
-        border-radius: 0.75rem;
+        background: linear-gradient(135deg, rgba($primary-color, 0.03) 0%, rgba($tertiary-color, 0.05) 100%);
+        border: 1px solid rgba($primary-color, 0.08);
+        border-radius: $radius-md;
         padding: 1.25rem;
         margin-bottom: 2rem;
         gap: 1.5rem;
 
         &.detailed {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: $bg-light;
+            border: 1px solid $border-color;
         }
 
         .info-item {
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.3rem;
             flex: 1;
 
             .info-label {
-                font-size: 0.8rem;
-                color: #64748b;
-                font-weight: 600;
+                font-size: 0.7rem;
+                color: $text-light;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
             }
 
             .info-value {
                 font-size: 0.95rem;
-                color: #0f172a;
+                color: $text-main;
                 font-weight: 500;
 
                 &.custom-uppercase { text-transform: uppercase; }
                 &.dashboard-bold { font-weight: 700; }
                 &.dashboard-xl { font-size: 1.25rem; }
-                &.dashboard-primary { color: $primary-color; }
+                &.dashboard-primary { color: $primary-color; font-weight: 800; }
             }
         }
     }
@@ -358,10 +532,21 @@ $border-color: #e2e8f0;
     .dashboard-mt-4 { margin-top: 1rem; }
 
     .section-title {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 700;
-        color: #334155;
+        color: $text-secondary;
         margin: 0 0 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        &::before {
+            content: '';
+            width: 3px;
+            height: 1.1em;
+            background: $accent-color;
+            border-radius: 2px;
+        }
     }
 
     .estimates-grid {
@@ -374,31 +559,34 @@ $border-color: #e2e8f0;
         margin-bottom: 2rem;
 
         .estimate-card {
-            border-radius: 0.75rem;
+            border-radius: $radius-md;
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            
+            transition: $transition-fast;
+
+            &:hover {
+                transform: translateY(-2px);
+            }
+
             &.min {
-                background-color: #eff6ff;
+                background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
                 border: 1px solid #bfdbfe;
 
                 .estimate-title { color: #1d4ed8; }
-                .big-number { color: #1e3a8a; }
+                .big-number { color: $secondary-color; }
                 .pts { color: #1d4ed8; }
-                .estimate-sub { color: #3b82f6; }
-                .min-badge { background-color: #dbeafe; color: #1e40af; }
+                .min-badge { background-color: #bfdbfe; color: #1e40af; }
             }
 
             &.max {
-                background-color: #fff7ed;
+                background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
                 border: 1px solid #fed7aa;
 
                 .estimate-title { color: #c2410c; }
                 .big-number { color: #7c2d12; }
                 .pts { color: #c2410c; }
-                .estimate-sub { color: #ea580c; }
-                .max-badge { background-color: #ffedd5; color: #9a3412; }
+                .max-badge { background-color: #fed7aa; color: #9a3412; }
             }
 
             .estimate-header {
@@ -408,14 +596,15 @@ $border-color: #e2e8f0;
                 margin-bottom: 1rem;
 
                 .estimate-title {
-                    font-size: 0.85rem;
-                    font-weight: 700;
-                    letter-spacing: 0.05em;
+                    font-size: 0.8rem;
+                    font-weight: 800;
+                    letter-spacing: 0.08em;
+                    text-transform: uppercase;
                 }
 
                 .estimate-badge {
-                    font-size: 0.7rem;
-                    font-weight: 600;
+                    font-size: 0.65rem;
+                    font-weight: 700;
                     padding: 0.2rem 0.6rem;
                     border-radius: 1rem;
                 }
@@ -429,129 +618,165 @@ $border-color: #e2e8f0;
                     font-weight: 800;
                     line-height: 1;
                 }
-                
+
                 .pts {
-                    font-size: 1rem;
+                    font-size: 0.95rem;
                     font-weight: 700;
                     margin-left: 0.25rem;
                 }
             }
-
-            .estimate-sub {
-                font-size: 0.85rem;
-                font-weight: 500;
-            }
         }
     }
 }
 
-.locked-info-banner {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    margin-bottom: 2rem !important;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+// ═══════════════════════════════════════════════════════════════
+// META HERO CARD — Coordenador Readonly Summary
+// ═══════════════════════════════════════════════════════════════
 
-    .banner-header {
+.meta-hero-card {
+    background: linear-gradient(160deg, $secondary-color 0%, $primary-color 60%, $tertiary-color 100%);
+    border-radius: $radius-md;
+    padding: 2rem 2rem 1.75rem !important;
+    margin-bottom: 2rem !important;
+    position: relative;
+    overflow: hidden;
+
+    // Decorative gold streak
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, $accent-color 0%, $highlight-color 40%, transparent 100%);
+    }
+
+    .hero-top {
         display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #64748b;
-        font-size: 0.8rem;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 0.85rem;
+    }
+
+    .hero-title {
+        font-size: 1.35rem;
         font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        margin-bottom: 1.25rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 1px dashed #cbd5e1;
+        color: #ffffff;
+        margin: 0;
+        line-height: 1.35;
+        flex: 1;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .hero-pontos {
+        display: flex;
+        align-items: baseline;
+        gap: 0.2rem;
+        background: rgba($accent-color, 0.15);
+        border: 1px solid rgba($accent-color, 0.3);
+        border-radius: $radius-sm;
+        padding: 0.3rem 0.7rem;
+        flex-shrink: 0;
+
+        .pontos-number {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: $accent-color;
+            line-height: 1;
+        }
+
+        .pontos-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: rgba($accent-color, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    }
+
+    .hero-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.2rem 0.6rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 2rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.82rem;
+        font-weight: 600;
+        backdrop-filter: blur(4px);
 
         .material-icons {
-            font-size: 1.1rem;
-            color: $primary-color;
+            font-size: 0.95rem;
+            opacity: 0.7;
+        }
+
+        &.accent {
+            background: rgba($accent-color, 0.12);
+            border-color: rgba($accent-color, 0.25);
+            color: $accent-color;
+
+            .material-icons { color: $accent-color; opacity: 0.8; }
+        }
+
+        &.subtle {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
         }
     }
 
-    .banner-content-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
-
-        @media (min-width: 640px) {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        @media (min-width: 768px) {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        .banner-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-
-            &.title-span {
-                grid-column: 1 / -1;
-            }
-
-            &.full-width {
-                grid-column: 1 / -1;
-            }
-
-            .label {
-                font-size: 0.7rem;
-                color: #94a3b8;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-            }
-
-            .value {
-                font-size: 1rem;
-                color: #1e293b;
-                font-weight: 700;
-                line-height: 1.4;
-
-                &.highlight {
-                    color: $primary-color;
-                    font-size: 1.25rem;
-                }
-            }
-
-            .description-text {
-                font-weight: 500;
-                font-size: 0.95rem;
-                color: #475569;
-                background: #ffffff;
-                padding: 0.75rem;
-                border-radius: 0.5rem;
-                border: 1px solid #f1f5f9;
-            }
-        }
+    .hero-description {
+        margin: 0.6rem 0 0.25rem;
+        padding: 0.6rem 0.85rem;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: $radius-sm;
+        border-left: 3px solid rgba($accent-color, 0.5);
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        font-weight: 400;
     }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD DESCRIPTION BLOCK
+// ═══════════════════════════════════════════════════════════════
 
 .dashboard-description {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid $border-color;
 
     .info-label {
-        font-size: 0.8rem;
-        color: #64748b;
-        font-weight: 600;
+        font-size: 0.75rem;
+        color: $text-light;
+        font-weight: 700;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
         display: block;
         margin-bottom: 0.75rem;
     }
 
     p {
-        font-size: 1.05rem;
-        color: #334155;
+        font-size: 1rem;
+        color: $text-secondary;
         line-height: 1.7;
         margin: 0;
-        background: #f8fafc;
-        padding: 1rem;
-        border-radius: 0.5rem;
+        background: $bg-light;
+        padding: 1rem 1.25rem;
+        border-radius: $radius-sm;
+        border-left: 3px solid $accent-color;
     }
 }

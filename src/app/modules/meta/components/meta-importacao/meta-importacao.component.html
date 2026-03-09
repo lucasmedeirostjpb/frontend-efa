@@ -1,0 +1,76 @@
+<div class="p-4">
+  <p-toast></p-toast>
+  
+  <p-card header="Importação em Lote de Metas" subheader="Siga as etapas para importar seus dados">
+    
+    <!-- ETAPA 1: UPLOAD -->
+    @if (etapa === 'upload') {
+      <div class="flex flex-column align-items-center justify-content-center py-6">
+        <i class="pi pi-file-excel text-6xl text-primary mb-4" style="font-size: 4rem"></i>
+        <h3 class="mb-4">Selecione o arquivo Excel ou CSV</h3>
+        
+        <p-fileUpload 
+          mode="basic" 
+          chooseLabel="Escolher Arquivo" 
+          accept=".xlsx,.xls,.csv" 
+          [maxFileSize]="1000000" 
+          (onSelect)="onUpload($event)"
+          [auto]="true"
+          styleClass="p-button-lg">
+        </p-fileUpload>
+        
+        <p class="mt-4 text-color-secondary">Formatos aceitos: .xlsx, .xls e .csv</p>
+      </div>
+    }
+
+    <!-- ETAPA 2: MAPEAMENTO -->
+    @if (etapa === 'mapeamento') {
+      <div class="flex flex-column gap-4">
+        <div class="flex justify-content-between align-items-center">
+          <h4 class="text-xl font-medium">Mapeamento de Colunas</h4>
+          <div class="flex gap-2">
+            <p-button 
+                label="Voltar" 
+                icon="pi pi-arrow-left" 
+                [outlined]="true" 
+                severity="secondary" 
+                (onClick)="voltar()">
+            </p-button>
+            <p-button 
+                label="Confirmar Importação" 
+                icon="pi pi-check" 
+                (onClick)="confirmarImportacao()">
+            </p-button>
+          </div>
+        </div>
+
+        <p-table [value]="dadosMapeamento" [responsiveLayout]="'scroll'" styleClass="p-datatable-striped">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 50%">Coluna da Planilha</th>
+              <th style="width: 50%">Campo no Sistema</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-col>
+            <tr>
+              <td>
+                <span class="font-bold">{{ col.planilha }}</span>
+              </td>
+              <td>
+                <p-select 
+                  [options]="camposSistema" 
+                  [(ngModel)]="col.sistema" 
+                  placeholder="Selecione o campo correspondente"
+                  [showClear]="true"
+                  appendTo="body"
+                  styleClass="w-full">
+                </p-select>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+
+  </p-card>
+</div>

@@ -53,6 +53,14 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
     { label: 'Não Cumprida', value: 'NAO_CUMPRIDA' }
   ];
 
+  nivelDificuldadeOptions = [
+    { label: 'Sem dificuldades', value: 'SEM_DIFICULDADES' },
+    { label: 'Em alerta', value: 'EM_ALERTA' },
+    { label: 'Situação crítica', value: 'SITUACAO_CRITICA' }
+  ];
+
+  private statusConclusao = ['TOTALMENTE_CUMPRIDA', 'PARCIALMENTE_CUMPRIDA', 'NAO_CUMPRIDA'];
+
   constructor(
     private fb: FormBuilder, 
     private metaService: MetaService,
@@ -72,7 +80,10 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
       pMaximo: [0, [Validators.required, Validators.min(0)]],
       estimativaReal: [0],
       tetoEstimado: [0],
-      pontosAtingidos: [0]
+      pontosAtingidos: [0],
+      nivelDificuldade: ['SEM_DIFICULDADES'],
+      evidenciasAuditoria: [''],
+      observacoes: ['']
     });
   }
 
@@ -135,6 +146,20 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
     tetoControl?.updateValueAndValidity();
     estimativaControl?.updateValueAndValidity();
     atingidosControl?.updateValueAndValidity();
+
+    // Validação de Evidências para Auditoria
+    const evidenciasControl = this.metaForm.get('evidenciasAuditoria');
+    if (this.statusConclusao.includes(s)) {
+      evidenciasControl?.setValidators([Validators.required, Validators.minLength(20)]);
+    } else {
+      evidenciasControl?.clearValidators();
+    }
+    evidenciasControl?.updateValueAndValidity();
+  }
+
+  isStatusConclusao(): boolean {
+    const s = this.metaForm.get('status')?.value || 'PENDENTE';
+    return this.statusConclusao.includes(s);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -149,7 +174,10 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
           pMaximo: 0,
           estimativaReal: 0,
           tetoEstimado: 0,
-          pontosAtingidos: 0
+          pontosAtingidos: 0,
+          nivelDificuldade: 'SEM_DIFICULDADES',
+          evidenciasAuditoria: '',
+          observacoes: ''
         });
         this.atualizarValidadores('PENDENTE');
       }
@@ -200,7 +228,10 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
       pMaximo: meta.pMaximo,
       estimativaReal: meta.estimativaReal || 0,
       tetoEstimado: meta.tetoEstimado || 0,
-      pontosAtingidos: meta.pontosAtingidos || 0
+      pontosAtingidos: meta.pontosAtingidos || 0,
+      nivelDificuldade: meta.nivelDificuldade || 'SEM_DIFICULDADES',
+      evidenciasAuditoria: meta.evidenciasAuditoria || '',
+      observacoes: meta.observacoes || ''
     });
     this.atualizarValidadores(meta.status || 'PENDENTE');
   }
