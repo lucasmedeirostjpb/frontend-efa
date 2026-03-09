@@ -11,7 +11,9 @@ export class MetaService {
 
   private readonly apiUrl = `${environment.apiUrl}/api/metas`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { 
+    console.log('MetaService: apiUrl configurada como:', this.apiUrl);
+  }
 
   /**
    * GET /api/metas?page=X&size=Y - Lista metas com paginação.
@@ -43,6 +45,14 @@ export class MetaService {
    */
   criar(meta: Partial<Meta>): Observable<Meta> {
     return this.http.post<Meta>(this.apiUrl, meta);
+  }
+
+  /**
+   * POST /api/metas/batch - Cria metas em lote.
+   * Requer role COORDENADOR.
+   */
+  criarEmLote(metas: Partial<Meta>[]): Observable<Meta[]> {
+    return this.http.post<Meta[]>(`${this.apiUrl}/batch`, metas);
   }
 
   /**
