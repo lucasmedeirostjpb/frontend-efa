@@ -10,9 +10,10 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import * as XLSX from 'xlsx';
 
-interface ColunaMapeamento {
-  planilha: string;
-  sistema: string | null;
+interface ItemMapeamento {
+  campo: string;
+  label: string;
+  colunaPlanilha: string | null;
 }
 
 @Component({
@@ -35,7 +36,7 @@ interface ColunaMapeamento {
 export class MetaImportacaoComponent {
   etapa: 'upload' | 'mapeamento' = 'upload';
   colunasPlanilha: string[] = [];
-  dadosMapeamento: ColunaMapeamento[] = [];
+  dadosMapeamento: ItemMapeamento[] = [];
   
   camposSistema = [
     { label: 'Título da Meta', value: 'titulo' },
@@ -45,7 +46,10 @@ export class MetaImportacaoComponent {
     { label: 'Artigo', value: 'artigo' },
     { label: 'Ano do Ciclo', value: 'anoCiclo' },
     { label: 'Prazo (Deadline)', value: 'deadline' },
-    { label: 'Pontos Máximos', value: 'pMaximo' }
+    { label: 'Pontos Máximos', value: 'pMaximo' },
+    { label: 'Nível de Dificuldade', value: 'nivelDificuldade' },
+    { label: 'Evidências Auditoria', value: 'evidenciasAuditoria' },
+    { label: 'Observações', value: 'observacoes' }
   ];
 
   constructor(private messageService: MessageService) {}
@@ -60,16 +64,18 @@ export class MetaImportacaoComponent {
       const firstSheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[firstSheetName];
       
-      // Extrair apenas os cabeçalhos (primeira linha)
-      // sheet_to_json com header: 1 retorna um array de arrays (rows)
       const jsonData: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       
       if (jsonData && jsonData.length > 0) {
-        this.colunasPlanilha = jsonData[0].map(h => String(h));
-        this.dadosMapeamento = this.colunasPlanilha.map(col => ({
-          planilha: col,
-          sistema: null
+        this.colunasPlanilha = jsonData[0].map(h => String(h)).filter(h => h && h.trim() !== '');
+        
+        // Inicializa o mapeamento baseado nos campos do sistema
+        this.dadosMapeamento = this.camposSistema.map(campo => ({
+          campo: campo.value,
+          label: campo.label,
+          colunaPlanilha: this.tentarAutoMapear(campo.label, this.colunasPlanilha)
         }));
+        
         this.etapa = 'mapeamento';
       } else {
         this.messageService.add({ 
@@ -83,6 +89,14 @@ export class MetaImportacaoComponent {
     reader.readAsArrayBuffer(file);
   }
 
+  private tentarAutoMapear(labelSistema: string, colunas: string[]): string | null {
+    const labelLower = labelSistema.toLowerCase();
+    return colunas.find(c => {
+      const colLower = c.toLowerCase();
+      return colLower === labelLower || colLower.includes(labelLower) || labelLower.includes(colLower);
+    }) || null;
+  }
+
   voltar() {
     this.etapa = 'upload';
     this.colunasPlanilha = [];
@@ -90,16 +104,16 @@ export class MetaImportacaoComponent {
   }
 
   confirmarImportacao() {
-    // Retorna o dicionário de mapeamento conforme solicitado
+    // Retorna o dicionário de mapeamento invertido: Campo Sistema -> Coluna Planilha
     const mapeamento: { [key: string]: string } = {};
     
     this.dadosMapeamento.forEach(item => {
-      if (item.sistema) {
-        mapeamento[item.planilha] = item.sistema;
+      if (item.colunaPlanilha) {
+        mapeamento[item.campo] = item.colunaPlanilha;
       }
     });
 
-    console.log('Mapeamento Final:', mapeamento);
+    console.log('Mapeamento Final (Sistema -> Planilha):', mapeamento);
     this.messageService.add({ 
       severity: 'success', 
       summary: 'Mapeamento Concluído', 

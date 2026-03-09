@@ -47,21 +47,24 @@
         <p-table [value]="dadosMapeamento" [responsiveLayout]="'scroll'" styleClass="p-datatable-striped">
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 50%">Coluna da Planilha</th>
               <th style="width: 50%">Campo no Sistema</th>
+              <th style="width: 50%">Coluna da Planilha</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-col>
+          <ng-template pTemplate="body" let-item>
             <tr>
               <td>
-                <span class="font-bold">{{ col.planilha }}</span>
+                <span class="font-bold text-primary">{{ item.label }}</span>
+                <small class="block text-color-secondary">{{ item.campo }}</small>
               </td>
               <td>
                 <p-select 
-                  [options]="camposSistema" 
-                  [(ngModel)]="col.sistema" 
-                  placeholder="Selecione o campo correspondente"
+                  [options]="colunasPlanilha" 
+                  [(ngModel)]="item.colunaPlanilha" 
+                  placeholder="Selecione a coluna da planilha"
                   [showClear]="true"
+                  [filter]="true"
+                  filterPlaceholder="Pesquisar coluna..."
                   appendTo="body"
                   styleClass="w-full">
                 </p-select>
