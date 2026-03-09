@@ -19,7 +19,7 @@ $highlight-color: #ffd500;
     justify-content: space-between;
     padding: 0 2rem;
     height: 64px;
-    background: linear-gradient(135deg, darken($secondary-color, 4%) 0%, $primary-color 40%, $tertiary-color 100%);
+    background: linear-gradient(135deg, color.adjust($secondary-color, $lightness: -4%) 0%, $primary-color 40%, $tertiary-color 100%);
     box-shadow: 0 4px 20px rgba($secondary-color, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;

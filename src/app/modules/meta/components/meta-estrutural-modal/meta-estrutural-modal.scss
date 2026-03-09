@@ -48,7 +48,7 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     .p-dialog-footer {
         border-top: 1px solid $border-color;
         padding: 1.25rem 2rem;
-        background: linear-gradient(180deg, $bg-light 0%, darken($bg-light, 2%) 100%);
+        background: linear-gradient(180deg, $bg-light 0%, color.adjust($bg-light, $lightness: -2%) 100%);
     }
 
     // ─── PrimeNG Input Overrides ───

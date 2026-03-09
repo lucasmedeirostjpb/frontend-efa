@@ -40,8 +40,6 @@
         @for (meta of metas; track meta.id) {
         <p-card styleClass="meta-card-prime">
             <ng-template pTemplate="content">
-                <div class="meta-card-horizontal-wrapper">
-                    <div class="meta-card-left-column">
                         <div class="meta-card-header-v2">
                             <div class="header-info-group">
                                 <span class="eixo-badge" [title]="'Eixo: ' + (meta.eixoNome || 'N/A')">
@@ -58,9 +56,7 @@
                         
                         <h3 class="meta-title-v2" [title]="meta.titulo">{{ meta.titulo }}</h3>
                         <p class="meta-subtitle-v2">Referência: {{ meta.artigo || '-' }}</p>
-                    </div>
 
-                    <div class="meta-card-right-column">
                         <div class="meta-metrics-v2">
                             <div class="metric-item" title="Pontos aplicáveis">
                                 <i class="material-icons metric-icon">military_tech</i>
@@ -90,8 +86,6 @@
                                 <span class="metric-text">{{ meta.deadline ? (meta.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
                             </div>
                         </div>
-                    </div>
-                </div>
             </ng-template>
 
             <ng-template pTemplate="footer">
