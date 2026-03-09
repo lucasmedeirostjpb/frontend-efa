@@ -241,12 +241,14 @@ O modal abre como dialog PrimeNG e oferece dois modos:
   - Descrição opcional
 
 ### 📥 Importação em Lote (`/metas/importar`)
-
-- Upload de arquivo **Excel (.xlsx, .xls) ou CSV**
-- Leitura client-side com biblioteca `xlsx`
-- Extração dinâmica das colunas do arquivo
-- Mapeamento manual de colunas → campos da Meta
-- Envio em lote para a API
+- **Upload Inteligente:** Suporte a arquivos Excel (.xlsx, .xls) e CSV.
+- **Mapeamento Dinâmico:** Extração automática de colunas para vínculo com campos do sistema.
+- **Sanitização de Dados:** 
+  - Limpeza automática de símbolos monetários (R$) e espaços.
+  - Conversão inteligente de formatos de data (DD/MM/YYYY → ISO).
+  - Tratamento de campos inválidos (converte `-` ou vazios para null).
+- **Processamento em Lote:** Envio de todos os registros em uma única transação para a API (`/batch`).
+- **Auto-criação Estrutural:** Eixos e Setores são criados automaticamente no backend se identificados apenas pelo nome.
 
 ### 🧭 Navbar
 
@@ -337,6 +339,7 @@ O `authInterceptor` é um interceptor funcional que automaticamente:
 | `GET` | `/api/metas/{id}` | Público | Busca meta por ID |
 | `GET` | `/api/metas/{id}/historico` | Público | Histórico de alterações (JaVers) |
 | `POST` | `/api/metas` | COORDENADOR | Cria nova meta |
+| `POST` | `/api/metas/batch` | COORDENADOR | Cria metas em lote (Importação) |
 | `PUT` | `/api/metas/{id}` | COORDENADOR | Atualiza meta existente |
 | `DELETE` | `/api/metas/{id}` | COORDENADOR | Exclui meta |
 | `GET` | `/api/eixos` | Público | Lista eixos temáticos |
