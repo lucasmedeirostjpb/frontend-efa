@@ -226,10 +226,10 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         grid-template-columns: repeat(2, 1fr);
     }
     @media (min-width: 1200px) {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
     @media (min-width: 1600px) {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -292,6 +292,8 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     flex-direction: column;
     gap: 0.6rem;
     margin-bottom: 1rem;
+    position: relative;
+    padding-right: 5rem; // Espaço para o badge absoluto
 
     @media (min-width: 640px) {
         flex-direction: row;
@@ -349,9 +351,13 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        align-self: flex-start;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
         flex-shrink: 0;
         white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 
         &.bg-green-100 {
             background: linear-gradient(135deg, rgba($accent-color, 0.15) 0%, rgba($highlight-color, 0.2) 100%);
