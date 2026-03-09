@@ -41,8 +41,8 @@ export class MetaImportacaoComponent {
   camposSistema = [
     { label: 'Título da Meta', value: 'titulo' },
     { label: 'Descrição', value: 'descricao' },
-    { label: 'ID do Eixo', value: 'eixoId' },
-    { label: 'ID do Setor', value: 'setorId' },
+    { label: 'Eixo Temático', value: 'eixoNome' },
+    { label: 'Setor Responsável', value: 'setorNome' },
     { label: 'Artigo', value: 'artigo' },
     { label: 'Ano do Ciclo', value: 'anoCiclo' },
     { label: 'Prazo (Deadline)', value: 'deadline' },
