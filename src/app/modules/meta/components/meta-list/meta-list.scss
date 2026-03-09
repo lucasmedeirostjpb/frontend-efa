@@ -223,13 +223,13 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     gap: 1.5rem;
 
     @media (min-width: 768px) {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
     @media (min-width: 1200px) {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
     }
     @media (min-width: 1600px) {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -238,36 +238,25 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 // ═══════════════════════════════════════════════════════════════
 
 :host ::ng-deep .meta-card-prime {
-    height: 100%;
+    height: 100%; 
+    min-height: 21rem; // Altura reduzida para equilíbrio
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     border-radius: $radius-md;
     background: $bg-light;
-    border: 1px solid $border-color;
+    border: 1px solid rgba($border-color, 0.6);
     box-shadow: $shadow-card;
     position: relative;
     border-left: 4px solid $primary-color;
-    transition: $transition;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -4px;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, $accent-color 0%, transparent 60%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
 
     &:hover {
         box-shadow: $shadow-card-hover;
         transform: translateY(-3px);
         border-left-color: $tertiary-color;
-
-        &::before {
-            opacity: 1;
-        }
+        border-color: rgba($primary-color, 0.2);
     }
 
     .p-card-body {
@@ -278,8 +267,10 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .p-card-content {
-        padding: 1.5rem 2.5rem;
+        padding: 1.5rem;
         flex-grow: 1;
+        display: flex;
+        flex-direction: column;
     }
 }
 
@@ -287,42 +278,17 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 // CARD HEADER — Badges & Status
 // ═══════════════════════════════════════════════════════════════
 
-.meta-card-horizontal-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-
-    @media (min-width: 1024px) {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-    }
-}
-
-.meta-card-left-column {
-    flex: 1;
-    min-width: 0; // Previne overflow em textos longos
-}
-
-.meta-card-right-column {
-    @media (min-width: 1024px) {
-        border-left: 1px solid rgba($border-color, 0.6);
-        padding-left: 2rem;
-        min-width: 280px;
-    }
-}
-
 .meta-card-header-v2 {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
-    margin-bottom: 1.25rem;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
     position: relative;
-    padding-right: 5.5rem; 
+    padding-right: 4.5rem; 
 
     @media (min-width: 640px) {
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start;
         flex-wrap: wrap;
     }
 
@@ -348,6 +314,7 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-transform: uppercase;
         letter-spacing: 0.06em;
         gap: 0.3rem;
+        word-break: break-word; // Permite quebra de palavra se necessário
 
         .badge-icon {
             font-size: 0.85rem;
@@ -380,12 +347,16 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         right: 0;
         z-index: 10;
         flex-shrink: 0;
-        white-space: nowrap;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        word-break: break-word;
+        text-align: center;
+        max-width: 7.5rem; // Força a quebra em "TOTALMENTE \n CUMPRIDA"
+        line-height: 1.1;
+        justify-content: center;
 
         &.bg-green-100 {
             background: linear-gradient(135deg, rgba($accent-color, 0.15) 0%, rgba($highlight-color, 0.2) 100%);
-            color: darken($secondary-color, 5%);
+            color: color.adjust($secondary-color, $lightness: -5%);
             border: 1px solid rgba($accent-color, 0.3);
         }
         &.bg-yellow-100 {
@@ -416,35 +387,42 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 // ═══════════════════════════════════════════════════════════════
 
 .meta-title-v2 {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: $secondary-color;
-    margin: 0 0 0.4rem 0;
-    line-height: 1.35;
-    display: block; // Em layout horizontal podemos deixar o título crescer mais naturalmente
-    min-height: auto;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 0.3rem 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 3rem;
 }
 
 .meta-subtitle-v2 {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: $text-light;
-    margin: 0;
+    margin: 0 0 1rem 0;
     font-weight: 500;
 }
 
 .meta-metrics-v2 {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.35rem; // Reduzido
+    margin-top: auto; 
+    padding-top: 0.75rem; // Reduzido
+    border-top: 1px solid rgba($border-color, 0.4);
 
     .metric-item {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.6rem; // Reduzido
         color: $text-secondary;
-        font-size: 0.9rem;
+        font-size: 0.85rem; // Reduzido
         font-weight: 600;
-        padding: 0.35rem 0.75rem;
+        padding: 0.25rem 0.6rem; // Reduzido
         background: rgba($bg-page, 0.4);
         border-radius: $radius-sm;
 
@@ -462,7 +440,7 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
         &.highlight-alt {
             background: rgba($accent-color, 0.04);
-            color: darken($secondary-color, 10%);
+            color: color.adjust($secondary-color, $lightness: -10%);
             border: 1px solid rgba($accent-color, 0.15);
         }
 
