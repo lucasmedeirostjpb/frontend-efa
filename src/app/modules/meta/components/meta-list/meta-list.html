@@ -40,50 +40,56 @@
         @for (meta of metas; track meta.id) {
         <p-card styleClass="meta-card-prime">
             <ng-template pTemplate="content">
-                <div class="meta-card-header-v2">
-                    <div class="header-info-group">
-                        <span class="eixo-badge" [title]="'Eixo: ' + (meta.eixoNome || 'N/A')">
-                            <i class="material-icons badge-icon">account_tree</i> {{ meta.eixoNome || 'N/A' }}
-                        </span>
-                        <span class="setor-badge" [title]="'Setor: ' + (meta.setorNome || 'N/A')">
-                            <i class="material-icons badge-icon">domain</i> {{ meta.setorNome || 'N/A' }}
-                        </span>
-                    </div>
-                    <span class="status-badge" [class]="getStatusBadgeClass(meta.status)">
-                        {{ formatStatus(meta.status) }}
-                    </span>
-                </div>
-                
-                <h3 class="meta-title-v2" [title]="meta.titulo">{{ meta.titulo }}</h3>
-                <p class="meta-subtitle-v2">Referência: {{ meta.artigo || '-' }}</p>
-                
-                <div class="meta-metrics-v2">
-                    <div class="metric-item" title="Pontos aplicáveis">
-                        <i class="material-icons metric-icon">military_tech</i>
-                        <span class="metric-text">{{ meta.pMaximo | number:'1.0-0' }} Pontos aplicáveis</span>
+                <div class="meta-card-horizontal-wrapper">
+                    <div class="meta-card-left-column">
+                        <div class="meta-card-header-v2">
+                            <div class="header-info-group">
+                                <span class="eixo-badge" [title]="'Eixo: ' + (meta.eixoNome || 'N/A')">
+                                    <i class="material-icons badge-icon">account_tree</i> {{ meta.eixoNome || 'N/A' }}
+                                </span>
+                                <span class="setor-badge" [title]="'Setor: ' + (meta.setorNome || 'N/A')">
+                                    <i class="material-icons badge-icon">domain</i> {{ meta.setorNome || 'N/A' }}
+                                </span>
+                            </div>
+                            <span class="status-badge" [class]="getStatusBadgeClass(meta.status)">
+                                {{ formatStatus(meta.status) }}
+                            </span>
+                        </div>
+                        
+                        <h3 class="meta-title-v2" [title]="meta.titulo">{{ meta.titulo }}</h3>
+                        <p class="meta-subtitle-v2">Referência: {{ meta.artigo || '-' }}</p>
                     </div>
 
-                    @if (meta.status === 'EM_ANDAMENTO' || meta.status === 'EM ANDAMENTO') {
-                    <div class="metric-item" title="Teto Estimado">
-                        <i class="material-icons metric-icon">keyboard_double_arrow_up</i>
-                        <span class="metric-text">{{ meta.tetoEstimado | number:'1.0-0' }} Teto Estimado</span>
-                    </div>
-                    <div class="metric-item" title="Estimativa Real">
-                        <i class="material-icons metric-icon">trending_up</i>
-                        <span class="metric-text">{{ meta.estimativaReal | number:'1.0-0' }} Estimativa Real</span>
-                    </div>
-                    }
+                    <div class="meta-card-right-column">
+                        <div class="meta-metrics-v2">
+                            <div class="metric-item" title="Pontos aplicáveis">
+                                <i class="material-icons metric-icon">military_tech</i>
+                                <span class="metric-text">{{ meta.pMaximo | number:'1.0-0' }} Pontos aplicáveis</span>
+                            </div>
 
-                    @if (meta.status === 'PARCIALMENTE_CUMPRIDA' || meta.status === 'TOTALMENTE_CUMPRIDA' || meta.status === 'NAO_CUMPRIDA' || meta.status === 'CONCLUÍDA') {
-                    <div class="metric-item" title="Pontos Atingidos">
-                        <i class="material-icons metric-icon">done_all</i>
-                        <span class="metric-text highlight-primary">{{ meta.pontosAtingidos | number:'1.0-0' }} Pontos Atingidos</span>
-                    </div>
-                    }
+                            @if (meta.status === 'EM_ANDAMENTO' || meta.status === 'EM ANDAMENTO') {
+                            <div class="metric-item highlight-alt" title="Teto Estimado">
+                                <i class="material-icons metric-icon">keyboard_double_arrow_up</i>
+                                <span class="metric-text">{{ meta.tetoEstimado | number:'1.0-0' }} Teto Estimado</span>
+                            </div>
+                            <div class="metric-item highlight-alt" title="Estimativa Real">
+                                <i class="material-icons metric-icon">trending_up</i>
+                                <span class="metric-text">{{ meta.estimativaReal | number:'1.0-0' }} Estimativa Real</span>
+                            </div>
+                            }
 
-                    <div class="metric-item" title="Prazo Final">
-                        <i class="material-icons metric-icon opacity-60">event</i>
-                        <span class="metric-text opacity-70">{{ meta.deadline ? (meta.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
+                            @if (meta.status === 'PARCIALMENTE_CUMPRIDA' || meta.status === 'TOTALMENTE_CUMPRIDA' || meta.status === 'NAO_CUMPRIDA' || meta.status === 'CONCLUÍDA') {
+                            <div class="metric-item highlight-main" title="Pontos Atingidos">
+                                <i class="material-icons metric-icon">done_all</i>
+                                <span class="metric-text">{{ meta.pontosAtingidos | number:'1.0-0' }} Pontos Atingidos</span>
+                            </div>
+                            }
+
+                            <div class="metric-item secondary" title="Prazo Final">
+                                <i class="material-icons metric-icon">event</i>
+                                <span class="metric-text">{{ meta.deadline ? (meta.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </ng-template>
