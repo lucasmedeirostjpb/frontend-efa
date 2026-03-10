@@ -1,164 +1,273 @@
-<p-dialog 
-  [header]="readonly ? '' : (metaParaEditar ? 'Editar Meta' : 'Nova Meta')" 
-  [(visible)]="display" 
-  [modal]="true" 
-  [style]="{ width: '90vw', maxWidth: '850px' }"
+<p-dialog
+  [header]="readonly ? 'Visualizar Meta' : (metaParaEditar ? 'Editar Meta Institucional' : 'Nova Meta Institucional')"
+  [(visible)]="display"
+  [modal]="true"
+  [style]="{ width: '54rem' }"
+  [breakpoints]="{ '991px': '88vw', '640px': '96vw' }"
   [draggable]="false"
   [resizable]="false"
-  [showHeader]="!readonly"
-  [styleClass]="readonly ? 'premium-modal dashboard-modal' : 'premium-modal default-modal'"
-  (onHide)="fechar()">
-
-  <ng-template pTemplate="header">
-      @if (!readonly) {
-          <div class="premium-modal-header">
-              <i class="material-icons header-icon">{{ metaParaEditar ? 'edit_square' : 'add_circle' }}</i>
-              <h2 class="header-title">{{ metaParaEditar ? 'Editar Meta Institucional' : 'Nova Meta Institucional' }}</h2>
-          </div>
-      }
-  </ng-template>
-
+  [dismissableMask]="true"
+  styleClass="meta-dialog"
+  (onHide)="fechar()"
+>
   @if (!readonly) {
-      <form [formGroup]="metaForm">
-        <div class="formgrid grid p-fluid">
+  <form [formGroup]="metaForm">
+    <div class="formgrid">
+      @if (showResumoEdicao()) {
+      <div class="meta-hero-card">
+        <div class="hero-top">
+          <h3 class="hero-title">{{ metaForm.get('titulo')?.value }}</h3>
+          <div class="hero-pontos">
+            <span class="pontos-number">{{ metaForm.get('pMaximo')?.value | number:'1.0-0' }}</span>
+            <span class="pontos-label">pts</span>
+          </div>
+        </div>
 
-          <!-- HERO CARD — Informações da Meta (Coordenador em edição) -->
-          @if (isCoordenadorAndEditing()) {
-            <div class="field col-12 meta-hero-card">
-                <div class="hero-top">
-                    <h3 class="hero-title">{{ metaForm.get('titulo')?.value }}</h3>
-                    <div class="hero-pontos">
-                        <span class="pontos-number">{{ metaForm.get('pMaximo')?.value | number:'1.0-0' }}</span>
-                        <span class="pontos-label">pts</span>
-                    </div>
-                </div>
-
-                <div class="hero-chips">
-                    <span class="hero-chip">
-                        <i class="material-icons">account_tree</i>
-                        {{ getEixoNome(metaForm.get('eixoId')?.value) }}
-                    </span>
-                    <span class="hero-chip">
-                        <i class="material-icons">domain</i>
-                        {{ getSetorNome(metaForm.get('setorId')?.value) }}
-                    </span>
-                    @if (metaForm.get('artigo')?.value) {
-                    <span class="hero-chip accent">
-                        <i class="material-icons">gavel</i>
-                        {{ metaForm.get('artigo')?.value }}
-                    </span>
-                    }
-                    <span class="hero-chip subtle">
-                        <i class="material-icons">event</i>
-                        {{ metaForm.get('anoCiclo')?.value }} · {{ metaForm.get('deadline')?.value ? (metaForm.get('deadline')?.value | date:'dd/MM/yyyy') : 'Sem prazo' }}
-                    </span>
-                </div>
-
-                @if (metaForm.get('descricao')?.value) {
-                <p class="hero-description">{{ metaForm.get('descricao')?.value }}</p>
-                }
-            </div>
+        <div class="hero-chips">
+          <span class="hero-chip">
+            <i class="material-icons">account_tree</i>
+            {{ getEixoNome(metaForm.get('eixoId')?.value) }}
+          </span>
+          <span class="hero-chip">
+            <i class="material-icons">domain</i>
+            {{ getSetorNome(metaForm.get('setorId')?.value) }}
+          </span>
+          @if (metaParaEditar?.coordenadorNome) {
+          <span class="hero-chip">
+            <i class="material-icons">person</i>
+            {{ metaParaEditar?.coordenadorNome }}
+          </span>
           }
+          @if (metaForm.get('artigo')?.value) {
+          <span class="hero-chip accent">
+            <i class="material-icons">gavel</i>
+            {{ metaForm.get('artigo')?.value }}
+          </span>
+          }
+          <span class="hero-chip subtle">
+            <i class="material-icons">event</i>
+            {{ metaForm.get('anoCiclo')?.value }} · {{ metaForm.get('deadline')?.value ? (metaForm.get('deadline')?.value | date:'dd/MM/yyyy') : 'Sem prazo' }}
+          </span>
+          <span [class]="'hero-status ' + getStatusBadgeClass(metaForm.get('status')?.value)">
+            {{ formatStatus(metaForm.get('status')?.value) }}
+          </span>
+        </div>
 
-          <!-- Título (Escondido se estiver no banner) -->
-          @if (!isCoordenadorAndEditing()) {
-          <div class="field col-12">
+        @if (metaForm.get('descricao')?.value) {
+        <p class="hero-description">{{ metaForm.get('descricao')?.value }}</p>
+        }
+      </div>
+      }
+
+      <div class="form-legend">
+        <i class="material-icons">info</i>
+        <span>Campos marcados com <strong>*</strong> são obrigatórios.</span>
+      </div>
+
+      @if (showDigovEditSections()) {
+      <div class="edit-section-toggle" role="tablist" aria-label="Alternar modo de edição da meta">
+        <button
+          type="button"
+          class="edit-section-toggle__button"
+          [class.edit-section-toggle__button--active]="editSection === 'preenchimento'"
+          [attr.aria-selected]="editSection === 'preenchimento'"
+          role="tab"
+          (click)="setEditSection('preenchimento')"
+        >
+          <i class="material-icons">edit_note</i>
+          <span>Preenchimento</span>
+        </button>
+        <button
+          type="button"
+          class="edit-section-toggle__button"
+          [class.edit-section-toggle__button--active]="editSection === 'estrutura'"
+          [attr.aria-selected]="editSection === 'estrutura'"
+          role="tab"
+          (click)="setEditSection('estrutura')"
+        >
+          <i class="material-icons">account_tree</i>
+          <span>Estrutura</span>
+        </button>
+      </div>
+      }
+
+      @if (!isCoordenadorAndEditing() && showEstruturaFields()) {
+      <section class="section-group">
+        <div class="section-group__header">
+          <h3 class="section-title">
+            <i class="material-icons">account_tree</i>
+            <span>Estrutura da Meta</span>
+          </h3>
+          <p class="section-description">Defina o escopo institucional, os responsáveis e os dados-base da meta.</p>
+        </div>
+
+        <div class="grid p-fluid section-group__grid">
+          <div class="field col-12 field--required" [class.field--invalid]="metaForm.get('titulo')?.invalid && metaForm.get('titulo')?.touched">
             <label for="titulo" class="font-semibold" [class.error-label]="metaForm.get('titulo')?.invalid && metaForm.get('titulo')?.touched">
               Título <span class="required-asterisk">*</span>
             </label>
-            <span class="p-input-icon-left w-full">
-              <input pInputText id="titulo" formControlName="titulo" placeholder="Digite o título da meta" class="w-full" />
-            </span>
+            <input
+              pInputText
+              id="titulo"
+              formControlName="titulo"
+              placeholder="Digite o título da meta"
+              class="w-full"
+              aria-required="true"
+              [attr.aria-invalid]="metaForm.get('titulo')?.invalid && metaForm.get('titulo')?.touched ? 'true' : 'false'"
+            />
             @if (metaForm.get('titulo')?.invalid && metaForm.get('titulo')?.touched) {
-              <small class="error-text"><i class="material-icons error-icon">error</i> O título é obrigatório.</small>
+            <small class="error-text"><i class="material-icons error-icon">error</i> O título é obrigatório.</small>
             }
           </div>
 
-          <!-- Descrição -->
           <div class="field col-12">
             <label for="descricao" class="font-semibold">Descrição</label>
-            <textarea pTextarea id="descricao" formControlName="descricao" rows="3" placeholder="Detalhes adicionais da meta" class="w-full"></textarea>
-          </div>
-          }
-
-          <!-- Agrupamento Estrutural (Apenas no cadastro ou ADMIN) -->
-          @if (!isCoordenadorAndEditing()) {
-          <div class="field col-12">
-              <h3 class="section-title">
-                  <i class="material-icons">account_tree</i> Classificação Estrutural
-              </h3>
+            <textarea pTextarea id="descricao" formControlName="descricao" rows="4" placeholder="Detalhes adicionais da meta" class="w-full"></textarea>
           </div>
 
-          <!-- Eixo ID -->
-          <div class="field col-12 md:col-4">
+          <div class="field col-12 md:col-4 field--required" [class.field--invalid]="metaForm.get('eixoId')?.invalid && metaForm.get('eixoId')?.touched">
             <label for="eixoId" class="font-semibold" [class.error-label]="metaForm.get('eixoId')?.invalid && metaForm.get('eixoId')?.touched">
               Eixo Temático <span class="required-asterisk">*</span>
             </label>
-            <p-select [options]="eixos" formControlName="eixoId" optionLabel="nome" optionValue="id" placeholder="Selecione um Eixo" styleClass="w-full" class="w-full"></p-select>
+            <p-select
+              inputId="eixoId"
+              [options]="eixos"
+              formControlName="eixoId"
+              optionLabel="nome"
+              optionValue="id"
+              placeholder="Selecione um eixo"
+              styleClass="w-full"
+              class="w-full"
+              aria-required="true"
+              [attr.aria-invalid]="metaForm.get('eixoId')?.invalid && metaForm.get('eixoId')?.touched ? 'true' : 'false'"
+            ></p-select>
           </div>
 
-          <!-- Setor ID -->
-          <div class="field col-12 md:col-4">
+          <div class="field col-12 md:col-4 field--required" [class.field--invalid]="metaForm.get('setorId')?.invalid && metaForm.get('setorId')?.touched">
             <label for="setorId" class="font-semibold" [class.error-label]="metaForm.get('setorId')?.invalid && metaForm.get('setorId')?.touched">
               Setor Responsável <span class="required-asterisk">*</span>
             </label>
-            <p-select [options]="setores" formControlName="setorId" optionLabel="nome" optionValue="id" placeholder="Selecione um Setor" styleClass="w-full" class="w-full"></p-select>
+            <p-select
+              inputId="setorId"
+              [options]="setores"
+              formControlName="setorId"
+              optionLabel="nome"
+              optionValue="id"
+              placeholder="Selecione um setor"
+              styleClass="w-full"
+              class="w-full"
+              aria-required="true"
+              [attr.aria-invalid]="metaForm.get('setorId')?.invalid && metaForm.get('setorId')?.touched ? 'true' : 'false'"
+            ></p-select>
           </div>
 
-          <!-- Coordenador ID -->
           <div class="field col-12 md:col-4">
             <label for="coordenadorId" class="font-semibold">Coordenador</label>
-            <p-select [options]="coordenadores" formControlName="coordenadorId" optionLabel="nome" optionValue="id" placeholder="Selecione um Coordenador" [showClear]="true" styleClass="w-full" class="w-full"></p-select>
+            <p-select
+              inputId="coordenadorId"
+              [options]="coordenadores"
+              formControlName="coordenadorId"
+              optionLabel="nome"
+              optionValue="id"
+              placeholder="Selecione um coordenador"
+              [showClear]="true"
+              styleClass="w-full"
+              class="w-full"
+            ></p-select>
           </div>
 
-          <!-- Artigo -->
-          <div class="field col-12 md:col-6">
-            <label for="artigo" class="font-semibold">Artigo (Referência)</label>
+          <div class="field col-12 md:col-4">
+            <label for="artigo" class="font-semibold">Artigo</label>
             <input pInputText id="artigo" formControlName="artigo" placeholder="Ex: Art. 5º" class="w-full" />
           </div>
-          }
 
-          <!-- Status -->
-          <div class="field col-12 md:col-6" [class.md:offset-6]="isCoordenadorAndEditing()">
-            <label for="status" class="font-semibold">Status <span class="required-asterisk">*</span></label>
-            <p-select id="status" [options]="statusOptions" formControlName="status" placeholder="Selecione..." styleClass="w-full" class="w-full"></p-select>
+          <div class="field col-12 md:col-4 field--required" [class.field--invalid]="metaForm.get('anoCiclo')?.invalid && metaForm.get('anoCiclo')?.touched">
+            <label for="anoCiclo" class="font-semibold" [class.error-label]="metaForm.get('anoCiclo')?.invalid && metaForm.get('anoCiclo')?.touched">
+              Ano do Ciclo <span class="required-asterisk">*</span>
+            </label>
+            <p-inputNumber
+              inputId="anoCiclo"
+              formControlName="anoCiclo"
+              [useGrouping]="false"
+              [minFractionDigits]="0"
+              [maxFractionDigits]="0"
+              styleClass="w-full"
+              aria-required="true"
+              [attr.aria-invalid]="metaForm.get('anoCiclo')?.invalid && metaForm.get('anoCiclo')?.touched ? 'true' : 'false'"
+            ></p-inputNumber>
           </div>
 
-          <!-- Agrupamento Prazos (Apenas no cadastro) -->
-          @if (!isCoordenadorAndEditing()) {
-          <div class="field col-12">
-              <h3 class="section-title">
-                  <i class="material-icons">event</i> Ciclo e Prazos
-              </h3>
-          </div>
-
-          <div class="field col-12 md:col-6">
-            <label for="anoCiclo" class="font-semibold">Ano do Ciclo <span class="required-asterisk">*</span></label>
-            <p-inputNumber inputId="anoCiclo" formControlName="anoCiclo" [useGrouping]="false" [minFractionDigits]="0" [maxFractionDigits]="0" styleClass="w-full"></p-inputNumber>
-          </div>
-
-          <div class="field col-12 md:col-6">
-            <label for="deadline" class="font-semibold">Deadline (Prazo Legal)</label>
+          <div class="field col-12 md:col-4">
+            <label for="deadline" class="font-semibold">Deadline</label>
             <p-datepicker inputId="deadline" formControlName="deadline" dateFormat="dd/mm/yy" [showIcon]="true" placeholder="Selecione uma data" styleClass="w-full" class="w-full"></p-datepicker>
           </div>
-          }
 
-          <!-- Agrupamento Pontuação (escondido se PENDENTE ou NAO_SE_APLICA) -->
-          @if (metaForm.get('status')?.value !== 'PENDENTE' && metaForm.get('status')?.value !== 'NAO_SE_APLICA') {
-          <div class="field col-12">
-              <h3 class="section-title">
-                  <i class="material-icons">functions</i> Execução e Resultados
-              </h3>
+          <div class="field col-12 md:col-4 field--required" [class.field--invalid]="metaForm.get('pMaximo')?.invalid && metaForm.get('pMaximo')?.touched">
+            <label for="pMaximo" class="font-semibold" [class.error-label]="metaForm.get('pMaximo')?.invalid && metaForm.get('pMaximo')?.touched">
+              Pontos aplicáveis <span class="required-asterisk">*</span>
+            </label>
+            <p-inputNumber
+              inputId="pMaximo"
+              formControlName="pMaximo"
+              [minFractionDigits]="0"
+              [maxFractionDigits]="0"
+              placeholder="0"
+              styleClass="w-full"
+              aria-required="true"
+              [attr.aria-invalid]="metaForm.get('pMaximo')?.invalid && metaForm.get('pMaximo')?.touched ? 'true' : 'false'"
+            ></p-inputNumber>
+          </div>
+        </div>
+      </section>
+      }
+
+      @if (showPreenchimentoFields()) {
+      <section class="section-group">
+        <div class="section-group__header">
+          <h3 class="section-title">
+            <i class="material-icons">monitoring</i>
+            <span>Preenchimento e Andamento</span>
+          </h3>
+          <p class="section-description">Atualize o status, registre estimativas e consolide os resultados alcançados.</p>
+        </div>
+
+        <div class="grid p-fluid section-group__grid">
+          <div class="field col-12 md:col-6 field--required" [class.field--invalid]="metaForm.get('status')?.invalid && metaForm.get('status')?.touched">
+            <label for="status" class="font-semibold" [class.error-label]="metaForm.get('status')?.invalid && metaForm.get('status')?.touched">
+              Status <span class="required-asterisk">*</span>
+            </label>
+            <p-select
+              inputId="status"
+              [options]="statusOptions"
+              formControlName="status"
+              placeholder="Selecione o status"
+              styleClass="w-full"
+              class="w-full"
+              aria-required="true"
+              [attr.aria-invalid]="metaForm.get('status')?.invalid && metaForm.get('status')?.touched ? 'true' : 'false'"
+            ></p-select>
           </div>
 
-          <!-- Pontos Aplicáveis -->
-          @if (!isCoordenadorAndEditing()) {
-          <div class="field col-12 md:col-6">
-            <label for="pMaximo" class="font-semibold">Pontos aplicáveis <span class="required-asterisk">*</span></label>
-            <p-inputNumber inputId="pMaximo" formControlName="pMaximo" [minFractionDigits]="0" [maxFractionDigits]="0" [readonly]="!!metaParaEditar" placeholder="0" styleClass="w-full"></p-inputNumber>
+          <div class="field col-12 md:col-6 field-note">
+            <div class="field-note__content">
+              <i class="material-icons">flag</i>
+              <span>O status define quais campos de resultado ficam disponíveis no formulário.</span>
+            </div>
           </div>
-          }
+        </div>
+      </section>
 
+      @if (metaForm.get('status')?.value !== 'PENDENTE' && metaForm.get('status')?.value !== 'NAO_SE_APLICA') {
+      <section class="section-group">
+        <div class="section-group__header">
+          <h3 class="section-title">
+            <i class="material-icons">functions</i>
+            <span>Execução e Resultados</span>
+          </h3>
+          <p class="section-description">Preencha apenas os indicadores compatíveis com o estágio atual da meta.</p>
+        </div>
+
+        <div class="grid p-fluid section-group__grid">
           @if (metaForm.get('status')?.value === 'EM_ANDAMENTO') {
           <div class="field col-12 md:col-6">
             <label for="tetoEstimado" class="font-semibold">Teto Estimado</label>
@@ -177,156 +286,279 @@
             <p-inputNumber inputId="pontosAtingidos" formControlName="pontosAtingidos" [minFractionDigits]="0" [maxFractionDigits]="0" placeholder="0" styleClass="w-full"></p-inputNumber>
           </div>
           }
-          }
+        </div>
+      </section>
+      }
 
-          <!-- Seção: Auditoria e Monitoramento -->
-          <div class="field col-12">
-              <h3 class="section-title">
-                  <i class="material-icons">policy</i> Auditoria e Monitoramento
-              </h3>
-          </div>
+      <section class="section-group">
+        <div class="section-group__header">
+          <h3 class="section-title">
+            <i class="material-icons">policy</i>
+            <span>Auditoria e Monitoramento</span>
+          </h3>
+          <p class="section-description">Registre o nível de dificuldade, as evidências e observações relevantes para acompanhamento.</p>
+        </div>
 
-          <!-- Nível de Dificuldade -->
+        <div class="grid p-fluid section-group__grid">
           <div class="field col-12 md:col-6">
             <label for="nivelDificuldade" class="font-semibold">Nível de Dificuldade</label>
-            <p-select id="nivelDificuldade" [options]="nivelDificuldadeOptions" formControlName="nivelDificuldade" placeholder="Selecione..." styleClass="w-full" class="w-full"></p-select>
+            <p-select id="nivelDificuldade" [options]="nivelDificuldadeOptions" formControlName="nivelDificuldade" placeholder="Selecione o nível" styleClass="w-full" class="w-full"></p-select>
           </div>
 
-          <!-- Evidências para Auditoria -->
-          <div class="field col-12">
+          <div class="field col-12 md:col-6 field-note">
+            @if (isStatusConclusao()) {
+            <div class="field-note__content field-note__content--warning">
+              <i class="material-icons">warning</i>
+              <span>Evidências para auditoria passam a ser obrigatórias quando a meta entra em status de conclusão.</span>
+            </div>
+            } @else {
+            <div class="field-note__content">
+              <i class="material-icons">visibility</i>
+              <span>Mantenha evidências objetivas para facilitar validação e consulta futura.</span>
+            </div>
+            }
+          </div>
+
+          <div class="field col-12" [class.field--required]="isStatusConclusao()" [class.field--invalid]="metaForm.get('evidenciasAuditoria')?.invalid && metaForm.get('evidenciasAuditoria')?.touched">
             <label for="evidenciasAuditoria" class="font-semibold" [class.error-label]="metaForm.get('evidenciasAuditoria')?.invalid && metaForm.get('evidenciasAuditoria')?.touched">
               Evidências para Auditoria
               @if (isStatusConclusao()) {
-                <span class="required-asterisk">*</span>
+              <span class="required-asterisk">*</span>
               }
             </label>
-            <textarea pTextarea id="evidenciasAuditoria" formControlName="evidenciasAuditoria" rows="4" placeholder="Descreva as evidências que comprovam o cumprimento da meta..." class="w-full"></textarea>
+            <textarea
+              pTextarea
+              id="evidenciasAuditoria"
+              formControlName="evidenciasAuditoria"
+              rows="5"
+              placeholder="Descreva as evidências que comprovam o cumprimento da meta..."
+              class="w-full"
+              [attr.aria-required]="isStatusConclusao() ? 'true' : 'false'"
+              [attr.aria-invalid]="metaForm.get('evidenciasAuditoria')?.invalid && metaForm.get('evidenciasAuditoria')?.touched ? 'true' : 'false'"
+            ></textarea>
             @if (isStatusConclusao()) {
-              <small class="char-hint">
-                <i class="material-icons" style="font-size: 0.85rem; vertical-align: middle;">info</i>
-                Mínimo de 20 caracteres obrigatórios para status de conclusão.
-              </small>
+            <small class="char-hint">
+              <i class="material-icons">info</i>
+              Mínimo de 20 caracteres quando a meta estiver concluída, parcialmente cumprida ou não cumprida.
+            </small>
             }
             @if (metaForm.get('evidenciasAuditoria')?.invalid && metaForm.get('evidenciasAuditoria')?.touched) {
               @if (metaForm.get('evidenciasAuditoria')?.errors?.['required']) {
-                <small class="error-text"><i class="material-icons error-icon">error</i> As evidências são obrigatórias para o status selecionado.</small>
+              <small class="error-text"><i class="material-icons error-icon">error</i> As evidências são obrigatórias para o status selecionado.</small>
               } @else if (metaForm.get('evidenciasAuditoria')?.errors?.['minlength']) {
-                <small class="error-text"><i class="material-icons error-icon">error</i> As evidências devem ter no mínimo 20 caracteres (atual: {{ metaForm.get('evidenciasAuditoria')?.value?.length || 0 }}).</small>
+              <small class="error-text"><i class="material-icons error-icon">error</i> As evidências devem ter no mínimo 20 caracteres.</small>
               }
             }
           </div>
 
-          <!-- Observações -->
           <div class="field col-12">
             <label for="observacoes" class="font-semibold">Observações</label>
-            <textarea pTextarea id="observacoes" formControlName="observacoes" rows="3" placeholder="Observações adicionais, anotações internas..." class="w-full"></textarea>
+            <textarea pTextarea id="observacoes" formControlName="observacoes" rows="4" placeholder="Observações adicionais, registros internos ou contexto complementar..." class="w-full"></textarea>
+          </div>
+        </div>
+      </section>
+      }
+    </div>
+  </form>
+  } @else {
+    @if (metaParaEditar) {
+    <div class="readonly-dashboard">
+      <div class="readonly-layout">
+        <div class="meta-hero-card meta-hero-card--readonly">
+          <div class="hero-top">
+            <h3 class="hero-title">{{ metaParaEditar.titulo }}</h3>
+            <div class="hero-pontos">
+              <span class="pontos-number">{{ metaParaEditar.pMaximo | number:'1.0-0' }}</span>
+              <span class="pontos-label">pts</span>
+            </div>
           </div>
 
+          <div class="hero-chips">
+            <span class="hero-chip">
+              <i class="material-icons">account_tree</i>
+              {{ getEixoNome(metaParaEditar.eixoId) }}
+            </span>
+            <span class="hero-chip">
+              <i class="material-icons">domain</i>
+              {{ getSetorNome(metaParaEditar.setorId) }}
+            </span>
+            <span class="hero-chip">
+              <i class="material-icons">person</i>
+              {{ metaParaEditar.coordenadorNome || 'Sem coordenador' }}
+            </span>
+            @if (metaParaEditar.artigo) {
+            <span class="hero-chip accent">
+              <i class="material-icons">gavel</i>
+              {{ metaParaEditar.artigo }}
+            </span>
+            }
+            <span class="hero-chip subtle">
+              <i class="material-icons">event</i>
+              {{ metaParaEditar.anoCiclo }} · {{ metaParaEditar.deadline ? (metaParaEditar.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}
+            </span>
+            <span [class]="'hero-status ' + getStatusBadgeClass(metaParaEditar.status)">
+              {{ formatStatus(metaParaEditar.status) }}
+            </span>
+          </div>
+
+          @if (metaParaEditar.descricao) {
+          <p class="hero-description">{{ metaParaEditar.descricao }}</p>
+          }
         </div>
-      </form>
-  } @else {
-      <!-- VISÃO "DASHBOARD" APENAS LEITURA -->
-      @if (metaParaEditar) {
-        <div class="readonly-dashboard relative">
-             <button class="close-dashboard-btn" (click)="fechar()">
-                <i class="material-icons">close</i>
-             </button>
 
-             <div class="dash-header">
-                <div class="dash-title-section">
-                    <h2 class="dash-title">{{ metaParaEditar.titulo }}</h2>
-                    <div class="dash-subtitle">
-                        <span class="dash-artigo">{{ metaParaEditar.artigo || '-' }}</span>
-                        <span class="status-badge" [class]="getStatusBadgeClass(metaParaEditar.status)">
-                            {{ formatStatus(metaParaEditar.status) }}
-                        </span>
-                    </div>
-                </div>
-             </div>
+        <section class="section-group section-group--readonly">
+          <div class="section-group__header">
+            <h3 class="section-title">
+              <i class="material-icons">info</i>
+              <span>Estrutura e Dados Base</span>
+            </h3>
+          </div>
 
-             <div class="info-box-grid">
-                <div class="info-item">
-                    <span class="info-label">Eixo Temático</span>
-                    <span class="info-value custom-uppercase">{{ getEixoNome(metaParaEditar.eixoId) }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Setor</span>
-                    <span class="info-value uppercase">{{ getSetorNome(metaParaEditar.setorId) }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Prazo</span>
-                    <span class="info-value">{{ metaParaEditar.deadline ? (metaParaEditar.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Pontos Aplicáveis</span>
-                    <span class="info-value dashboard-bold dashboard-xl">{{ metaParaEditar.pMaximo | number:'1.0-0' }}</span>
-                </div>
+          <div class="info-grid">
+            <div class="info-card">
+              <span class="info-label">Eixo Temático</span>
+              <span class="info-value">{{ getEixoNome(metaParaEditar.eixoId) }}</span>
+            </div>
+            <div class="info-card">
+              <span class="info-label">Setor Responsável</span>
+              <span class="info-value">{{ getSetorNome(metaParaEditar.setorId) }}</span>
+            </div>
+            <div class="info-card">
+              <span class="info-label">Coordenador</span>
+              <span class="info-value">{{ metaParaEditar.coordenadorNome || 'Sem coordenador' }}</span>
+            </div>
+            <div class="info-card">
+              <span class="info-label">Artigo</span>
+              <span class="info-value">{{ metaParaEditar.artigo || 'Não informado' }}</span>
+            </div>
+            <div class="info-card">
+              <span class="info-label">Ano do Ciclo</span>
+              <span class="info-value">{{ metaParaEditar.anoCiclo }}</span>
+            </div>
+            <div class="info-card">
+              <span class="info-label">Prazo</span>
+              <span class="info-value">{{ metaParaEditar.deadline ? (metaParaEditar.deadline | date:'dd/MM/yyyy') : 'Sem prazo definido' }}</span>
+            </div>
+          </div>
+        </section>
+
+        @if (metaParaEditar.status === 'EM_ANDAMENTO') {
+        <section class="section-group section-group--readonly">
+          <div class="section-group__header">
+            <h3 class="section-title">
+              <i class="material-icons">timeline</i>
+              <span>Prestação de Contas</span>
+            </h3>
+          </div>
+
+          <div class="estimates-grid">
+            <div class="estimate-card min">
+              <div class="estimate-header">
+                <span class="estimate-title">Estimativa Real</span>
+                <span class="estimate-badge min-badge">Bem encaminhado</span>
               </div>
-
-              @if (metaParaEditar.status === 'EM_ANDAMENTO') {
-              <h3 class="section-title">Prestação de Contas (Consulta)</h3>
-              <div class="estimates-grid">
-                 <div class="estimate-card min">
-                     <div class="estimate-header">
-                         <span class="estimate-title">ESTIMATIVA REAL</span>
-                         <span class="estimate-badge min-badge">Bem Encaminhados</span>
-                     </div>
-                     <div class="estimate-value">
-                         <span class="big-number">{{ metaParaEditar.estimativaReal | number:'1.0-0' }}</span> <span class="pts">pts</span>
-                     </div>
-                 </div>
-
-                 <div class="estimate-card max">
-                     <div class="estimate-header">
-                         <span class="estimate-title">TETO ESTIMADO (MÁXIMA)</span>
-                         <span class="estimate-badge max-badge">Máximo Possível</span>
-                     </div>
-                     <div class="estimate-value">
-                         <span class="big-number">{{ metaParaEditar.tetoEstimado | number:'1.0-0' }}</span> <span class="pts">pts</span>
-                     </div>
-                 </div>
+              <div class="estimate-value">
+                <span class="big-number">{{ metaParaEditar.estimativaReal | number:'1.0-0' }}</span>
+                <span class="pts">pts</span>
               </div>
-              }
+            </div>
 
-              @if (metaParaEditar.status === 'PARCIALMENTE_CUMPRIDA' || metaParaEditar.status === 'TOTALMENTE_CUMPRIDA' || metaParaEditar.status === 'NAO_CUMPRIDA') {
-              <h3 class="section-title dashboard-mt-4">Resultados Oficiais</h3>
-              <div class="info-box-grid detailed">
-                 <div class="info-item">
-                    <span class="info-label">Ano do Ciclo</span>
-                    <span class="info-value">{{ metaParaEditar.anoCiclo }}</span>
-                 </div>
-                 <div class="info-item">
-                    <span class="info-label">Pontos Atingidos</span>
-                    <span class="info-value dashboard-bold dashboard-primary">{{ metaParaEditar.pontosAtingidos | number:'1.0-0' }}</span>
-                 </div>
+            <div class="estimate-card max">
+              <div class="estimate-header">
+                <span class="estimate-title">Teto Estimado</span>
+                <span class="estimate-badge max-badge">Máximo possível</span>
               </div>
-              }
+              <div class="estimate-value">
+                <span class="big-number">{{ metaParaEditar.tetoEstimado | number:'1.0-0' }}</span>
+                <span class="pts">pts</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        }
 
-              @if (metaParaEditar.descricao) {
-                <div class="dashboard-description">
-                    <span class="info-label">Descrição Adicional</span>
-                    <p>{{ metaParaEditar.descricao }}</p>
-                </div>
-              }
-         </div>
-       }
-   }
+        @if (metaParaEditar.status === 'PARCIALMENTE_CUMPRIDA' || metaParaEditar.status === 'TOTALMENTE_CUMPRIDA' || metaParaEditar.status === 'NAO_CUMPRIDA') {
+        <section class="section-group section-group--readonly">
+          <div class="section-group__header">
+            <h3 class="section-title">
+              <i class="material-icons">emoji_events</i>
+              <span>Resultados Oficiais</span>
+            </h3>
+          </div>
+
+          <div class="info-grid info-grid--compact">
+            <div class="info-card">
+              <span class="info-label">Status consolidado</span>
+              <span [class]="'status-badge ' + getStatusBadgeClass(metaParaEditar.status)">{{ formatStatus(metaParaEditar.status) }}</span>
+            </div>
+            <div class="info-card">
+              <span class="info-label">Pontos atingidos</span>
+              <span class="info-value info-value--highlight">{{ metaParaEditar.pontosAtingidos | number:'1.0-0' }}</span>
+            </div>
+          </div>
+        </section>
+        }
+
+        <section class="section-group section-group--readonly">
+          <div class="section-group__header">
+            <h3 class="section-title">
+              <i class="material-icons">policy</i>
+              <span>Auditoria e Monitoramento</span>
+            </h3>
+          </div>
+
+          <div class="info-grid info-grid--compact">
+            <div class="info-card">
+              <span class="info-label">Nível de Dificuldade</span>
+              <span [class]="getNivelDificuldadeClass(metaParaEditar.nivelDificuldade)">
+                {{ formatNivelDificuldade(metaParaEditar.nivelDificuldade) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="readonly-text-block">
+            <span class="info-label">Evidências para Auditoria</span>
+            <p>{{ metaParaEditar.evidenciasAuditoria || 'Nenhuma evidência registrada até o momento.' }}</p>
+          </div>
+
+          <div class="readonly-text-block readonly-text-block--secondary">
+            <span class="info-label">Observações</span>
+            <p>{{ metaParaEditar.observacoes || 'Nenhuma observação registrada.' }}</p>
+          </div>
+        </section>
+      </div>
+    </div>
+    }
+  }
 
   <ng-template pTemplate="footer">
-      @if (!readonly) {
-        <div class="modal-footer">
-            <button class="btn btn-outline" (click)="fechar()">
-                <i class="material-icons btn-icon">close</i> Cancelar
-            </button>
-            <button class="btn btn-primary" style="margin-left: 1rem;" [disabled]="isSaving" [class.btn-saving]="isSaving" (click)="salvar()">
-                @if (isSaving) {
-                    <i class="material-icons btn-icon spin-icon">autorenew</i> Salvando...
-                } @else {
-                    <i class="material-icons btn-icon">check</i> Salvar Meta
-                }
-            </button>
-        </div>
-      }
-  </ng-template>
+    @if (!readonly) {
+    <div class="modal-footer">
+      <div class="modal-footer__start">
+        @if (canShowDeleteAction()) {
+        <button type="button" class="btn btn-danger" [disabled]="isDeleting || isSaving" (click)="excluirMeta()">
+          @if (isDeleting) {
+          <i class="material-icons btn-icon spin-icon">autorenew</i> Excluindo...
+          } @else {
+          <i class="material-icons btn-icon">delete</i> Excluir
+          }
+        </button>
+        }
+      </div>
 
+      <div class="modal-footer__end">
+        <button type="button" class="btn btn-outline" (click)="fechar()">
+          <i class="material-icons btn-icon">close</i> Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" [disabled]="isSaving || isDeleting" [class.btn-saving]="isSaving" (click)="salvar()">
+          @if (isSaving) {
+          <i class="material-icons btn-icon spin-icon">autorenew</i> Salvando...
+          } @else {
+          <i class="material-icons btn-icon">check</i> Salvar Meta
+          }
+        </button>
+      </div>
+    </div>
+    }
+  </ng-template>
 </p-dialog>
