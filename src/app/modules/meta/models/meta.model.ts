@@ -10,6 +10,7 @@ export interface Meta {
   setorNome?: string;
   coordenadorId?: number;
   coordenadorNome?: string;
+  coordenadorLoginKeycloak?: string;
   artigo: string;
   anoCiclo: number;
   deadline: string | Date;

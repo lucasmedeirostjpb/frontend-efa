@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import Keycloak from 'keycloak-js';
 import { environment } from '../../../environments/environment';
+import { Meta } from '../../modules/meta/models/meta.model';
 
 @Injectable({
   providedIn: 'root',
@@ -66,6 +67,14 @@ export class Auth {
 
   isCoordenador(): boolean {
     return this.hasRole('COORDENADOR');
+  }
+
+  isDigov(): boolean {
+    return this.hasRole('DIGOV');
+  }
+
+  podeEditarMeta(meta: Meta): boolean {
+    return this.isDigov() || (this.isCoordenador() && meta.coordenadorLoginKeycloak === this.getUsername());
   }
 
   async updateToken(minValidity: number = 30): Promise<string | undefined> {

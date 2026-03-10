@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -22,7 +22,6 @@ import { Auth } from '../../../../core/services/auth';
     CommonModule, 
     ReactiveFormsModule, 
     DialogModule, 
-    ButtonModule, 
     InputTextModule, 
     TextareaModule, 
     InputNumberModule, 
@@ -38,13 +37,18 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
   @Input() readonly = false;
   @Output() displayChange = new EventEmitter<boolean>();
   @Output() salvoSucesso = new EventEmitter<void>();
+  @Output() excluidoSucesso = new EventEmitter<void>();
 
   metaForm: FormGroup;
   isSaving = false;
+  isDeleting = false;
+  editSection: 'estrutura' | 'preenchimento' = 'preenchimento';
 
   eixos: Eixo[] = [];
   setores: Setor[] = [];
   coordenadores: Coordenador[] = [];
+  private auxiliaresLoaded = false;
+  private auxiliaresLoading = false;
 
   statusOptions = [
     { label: 'Pendente', value: 'PENDENTE' },
@@ -92,7 +96,6 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    this.carregarAuxiliares();
     this.metaForm.get('status')?.valueChanges.subscribe(status => {
       this.atualizarValidadores(status);
     });
@@ -102,18 +105,33 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
   }
 
   private carregarAuxiliares(): void {
-    this.eixoService.listarTodos().subscribe({
-      next: (dados) => this.eixos = dados,
-      error: (err) => console.error('Erro ao carregar eixos', err)
+    if (!this.deveCarregarAuxiliares() || this.auxiliaresLoaded || this.auxiliaresLoading) {
+      return;
+    }
+
+    this.auxiliaresLoading = true;
+
+    forkJoin({
+      eixos: this.eixoService.listarTodos(),
+      setores: this.setorService.listarTodos(),
+      coordenadores: this.coordenadorService.listarTodos(),
+    }).subscribe({
+      next: ({ eixos, setores, coordenadores }) => {
+        this.eixos = eixos;
+        this.setores = setores;
+        this.coordenadores = coordenadores;
+        this.auxiliaresLoaded = true;
+        this.auxiliaresLoading = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar dados auxiliares da meta', err);
+        this.auxiliaresLoading = false;
+      }
     });
-    this.setorService.listarTodos().subscribe({
-      next: (dados) => this.setores = dados,
-      error: (err) => console.error('Erro ao carregar setores', err)
-    });
-    this.coordenadorService.listarTodos().subscribe({
-      next: (dados) => this.coordenadores = dados,
-      error: (err) => console.error('Erro ao carregar coordenadores', err)
-    });
+  }
+
+  private deveCarregarAuxiliares(): boolean {
+    return this.display && !this.readonly && !this.isCoordenadorAndEditing() && this.auth.isLoggedIn();
   }
 
   atualizarValidadores(status: string | null): void {
@@ -172,7 +190,10 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['display'] && this.display) {
+      this.editSection = this.isDigovAndEditing() ? 'preenchimento' : 'estrutura';
+      this.carregarAuxiliares();
       this.isSaving = false;
+      this.isDeleting = false;
       if (this.metaParaEditar) {
         this.preencherFormulario(this.metaParaEditar);
       } else {
@@ -205,7 +226,59 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
   }
 
   isCoordenadorAndEditing(): boolean {
-    return !!this.metaParaEditar && this.auth.isCoordenador();
+    return !!this.metaParaEditar && this.auth.isCoordenador() && !this.auth.isDigov();
+  }
+
+  isDigovAndEditing(): boolean {
+    return !!this.metaParaEditar && this.auth.isDigov();
+  }
+
+  showDigovEditSections(): boolean {
+    return !this.readonly && this.isDigovAndEditing();
+  }
+
+  setEditSection(section: 'estrutura' | 'preenchimento'): void {
+    this.editSection = section;
+  }
+
+  showResumoEdicao(): boolean {
+    return !!this.metaParaEditar;
+  }
+
+  showEstruturaFields(): boolean {
+    return !this.showDigovEditSections() || this.editSection === 'estrutura';
+  }
+
+  showPreenchimentoFields(): boolean {
+    return !this.showDigovEditSections() || this.editSection === 'preenchimento';
+  }
+
+  canShowDeleteAction(): boolean {
+    return this.showDigovEditSections() && this.editSection === 'estrutura' && !!this.metaParaEditar;
+  }
+
+  formatNivelDificuldade(value: string | undefined): string {
+    switch (value) {
+      case 'EM_ALERTA':
+        return 'Em Alerta';
+      case 'SITUACAO_CRITICA':
+        return 'Situação Crítica';
+      case 'SEM_DIFICULDADES':
+      default:
+        return 'Sem Dificuldades';
+    }
+  }
+
+  getNivelDificuldadeClass(value: string | undefined): string {
+    switch (value) {
+      case 'EM_ALERTA':
+        return 'difficulty-badge difficulty-badge--warning';
+      case 'SITUACAO_CRITICA':
+        return 'difficulty-badge difficulty-badge--danger';
+      case 'SEM_DIFICULDADES':
+      default:
+        return 'difficulty-badge difficulty-badge--success';
+    }
   }
 
   formatStatus(status: string | undefined): string {
@@ -265,7 +338,7 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
     const payload = {
       ...formValue,
       id: this.metaParaEditar ? this.metaParaEditar.id : undefined,
-      pMaximo: this.metaParaEditar ? this.metaParaEditar.pMaximo : formValue.pMaximo,
+      pMaximo: this.isCoordenadorAndEditing() ? this.metaParaEditar?.pMaximo : formValue.pMaximo,
       // Garantir que não enviamos nulos para campos numéricos que o back pode validar
       estimativaReal: formValue.estimativaReal ?? 0,
       tetoEstimado: formValue.tetoEstimado ?? 0,
@@ -285,6 +358,32 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
         console.error('Erro ao salvar meta', err);
         alert('Ocorreu um erro ao salvar a meta. Tente novamente.');
         this.isSaving = false;
+      }
+    });
+  }
+
+  excluirMeta(): void {
+    if (!this.metaParaEditar || this.isDeleting) {
+      return;
+    }
+
+    const confirmado = window.confirm(`Deseja realmente excluir a meta "${this.metaParaEditar.titulo}"?`);
+    if (!confirmado) {
+      return;
+    }
+
+    this.isDeleting = true;
+
+    this.metaService.deletar(this.metaParaEditar.id).subscribe({
+      next: () => {
+        this.isDeleting = false;
+        this.fechar();
+        this.excluidoSucesso.emit();
+      },
+      error: (err) => {
+        console.error('Erro ao excluir meta', err);
+        alert('Ocorreu um erro ao excluir a meta. Tente novamente.');
+        this.isDeleting = false;
       }
     });
   }
