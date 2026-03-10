@@ -12,6 +12,7 @@ import { Meta, Eixo, Setor } from '../../models/meta.model';
 import { MetaService } from '../../services/meta';
 import { EixoService } from '../../services/eixo.service';
 import { SetorService } from '../../services/setor.service';
+import { CoordenadorService, Coordenador } from '../../services/coordenador.service';
 import { Auth } from '../../../../core/services/auth';
 
 @Component({
@@ -43,6 +44,7 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
 
   eixos: Eixo[] = [];
   setores: Setor[] = [];
+  coordenadores: Coordenador[] = [];
 
   statusOptions = [
     { label: 'Pendente', value: 'PENDENTE' },
@@ -66,6 +68,7 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
     private metaService: MetaService,
     private eixoService: EixoService,
     private setorService: SetorService,
+    private coordenadorService: CoordenadorService,
     public auth: Auth
   ) {
     this.metaForm = this.fb.group({
@@ -74,6 +77,7 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
       status: ['PENDENTE', Validators.required],
       eixoId: [null, [Validators.required]],
       setorId: [null, [Validators.required]],
+      coordenadorId: [null],
       artigo: [''],
       anoCiclo: [new Date().getFullYear(), [Validators.required, Validators.min(2000)]],
       deadline: [null],
@@ -105,6 +109,10 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
     this.setorService.listarTodos().subscribe({
       next: (dados) => this.setores = dados,
       error: (err) => console.error('Erro ao carregar setores', err)
+    });
+    this.coordenadorService.listarTodos().subscribe({
+      next: (dados) => this.coordenadores = dados,
+      error: (err) => console.error('Erro ao carregar coordenadores', err)
     });
   }
 
@@ -177,6 +185,7 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
           pontosAtingidos: 0,
           nivelDificuldade: 'SEM_DIFICULDADES',
           evidenciasAuditoria: '',
+          coordenadorId: null,
           observacoes: ''
         });
         this.atualizarValidadores('PENDENTE');
@@ -188,7 +197,7 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
         this.metaForm.enable();
         // Se for coordenador editando, trava campos específicos
         if (this.isCoordenadorAndEditing()) {
-          const fieldsToLock = ['titulo', 'descricao', 'artigo', 'eixoId', 'setorId', 'anoCiclo', 'deadline', 'pMaximo'];
+          const fieldsToLock = ['titulo', 'descricao', 'artigo', 'eixoId', 'setorId', 'anoCiclo', 'deadline', 'pMaximo', 'coordenadorId'];
           fieldsToLock.forEach(field => this.metaForm.get(field)?.disable({ emitEvent: false }));
         }
       }
@@ -222,6 +231,7 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
       status: meta.status || 'PENDENTE',
       eixoId: meta.eixoId,
       setorId: meta.setorId,
+      coordenadorId: meta.coordenadorId,
       artigo: meta.artigo,
       anoCiclo: meta.anoCiclo,
       deadline: meta.deadline ? new Date(meta.deadline) : null,

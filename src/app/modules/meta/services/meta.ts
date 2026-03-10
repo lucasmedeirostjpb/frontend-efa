@@ -26,6 +26,13 @@ export class MetaService {
   }
 
   /**
+   * GET /api/metas/all - Lista TODAS as metas sem paginação.
+   */
+  listarTodas(): Observable<Meta[]> {
+    return this.http.get<Meta[]>(`${this.apiUrl}/all`);
+  }
+
+  /**
    * GET /api/metas/:id - Busca uma meta pelo ID.
    */
   buscarPorId(id: string): Observable<Meta> {

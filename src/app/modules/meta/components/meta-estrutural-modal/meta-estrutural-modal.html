@@ -90,7 +90,7 @@
           </div>
 
           <!-- Eixo ID -->
-          <div class="field col-12 md:col-6">
+          <div class="field col-12 md:col-4">
             <label for="eixoId" class="font-semibold" [class.error-label]="metaForm.get('eixoId')?.invalid && metaForm.get('eixoId')?.touched">
               Eixo Temático <span class="required-asterisk">*</span>
             </label>
@@ -98,11 +98,17 @@
           </div>
 
           <!-- Setor ID -->
-          <div class="field col-12 md:col-6">
+          <div class="field col-12 md:col-4">
             <label for="setorId" class="font-semibold" [class.error-label]="metaForm.get('setorId')?.invalid && metaForm.get('setorId')?.touched">
               Setor Responsável <span class="required-asterisk">*</span>
             </label>
             <p-select [options]="setores" formControlName="setorId" optionLabel="nome" optionValue="id" placeholder="Selecione um Setor" styleClass="w-full" class="w-full"></p-select>
+          </div>
+
+          <!-- Coordenador ID -->
+          <div class="field col-12 md:col-4">
+            <label for="coordenadorId" class="font-semibold">Coordenador</label>
+            <p-select [options]="coordenadores" formControlName="coordenadorId" optionLabel="nome" optionValue="id" placeholder="Selecione um Coordenador" [showClear]="true" styleClass="w-full" class="w-full"></p-select>
           </div>
 
           <!-- Artigo -->

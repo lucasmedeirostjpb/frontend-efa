@@ -27,7 +27,7 @@
     </div>
     }
 
-    @if (!loading && !error && metas.length === 0) {
+    @if (!loading && !error && metasAgrupadas.length === 0) {
     <div class="empty-container">
         <i class="material-icons empty-icon">assignment</i>
         <p class="empty-title">Nenhuma meta cadastrada</p>
@@ -35,92 +35,116 @@
     </div>
     }
 
-    @if (!loading && !error && metas.length > 0) {
-    <div class="metas-grid">
-        @for (meta of metas; track meta.id) {
-        <p-card styleClass="meta-card-prime">
-            <ng-template pTemplate="content">
-                        <div class="meta-card-header-v2">
-                            <div class="header-info-group">
-                                <span class="eixo-badge" [title]="'Eixo: ' + (meta.eixoNome || 'N/A')">
-                                    <i class="material-icons badge-icon">account_tree</i> {{ meta.eixoNome || 'N/A' }}
-                                </span>
-                                <span class="setor-badge" [title]="'Setor: ' + (meta.setorNome || 'N/A')">
-                                    <i class="material-icons badge-icon">domain</i> {{ meta.setorNome || 'N/A' }}
-                                </span>
-                            </div>
-                            <span class="status-badge" [class]="getStatusBadgeClass(meta.status)">
-                                {{ formatStatus(meta.status) }}
-                            </span>
-                        </div>
-                        
-                        <h3 class="meta-title-v2" [title]="meta.titulo">{{ meta.titulo }}</h3>
-                        <p class="meta-subtitle-v2">Referência: {{ meta.artigo || '-' }}</p>
+    @if (!loading && !error && metasAgrupadas.length > 0) {
+    <!-- Controles de Agrupamento -->
+    <div class="agrupamento-controls" style="margin-bottom: 2rem; display: flex; justify-content: flex-end;">
+         <p-selectbutton 
+            [options]="agrupamentoOptions" 
+            [(ngModel)]="agrupamento" 
+            optionLabel="label" 
+            optionValue="value" 
+            (onChange)="onAgrupamentoChange()">
+         </p-selectbutton>
+    </div>
 
-                        <div class="meta-metrics-v2">
-                            <div class="metric-item" title="Pontos aplicáveis">
-                                <i class="material-icons metric-icon">military_tech</i>
-                                <span class="metric-text">{{ meta.pMaximo | number:'1.0-0' }} Pontos aplicáveis</span>
-                            </div>
+    <!-- Acordeão de Grupos -->
+    <p-accordion [multiple]="true">
+        @for (grupo of metasAgrupadas; track grupo.tituloGrupo) {
+        <p-accordion-panel [value]="grupo.tituloGrupo">
+            <p-accordion-header>
+                <span style="font-weight: 700; color: #003f88; font-size: 1.1rem;">
+                    {{ grupo.tituloGrupo }} 
+                    <p-tag [value]="grupo.metas.length.toString() + ' metas'" severity="info" class="ml-2"></p-tag>
+                </span>
+            </p-accordion-header>
+            <p-accordion-content>
+                <div class="grid">
+                    @for (meta of grupo.metas; track meta.id) {
+                    <div class="col-12 md:col-6 xl:col-4 p-2">
+                        @defer (on viewport; prefetch on idle) {
+                        <p-card styleClass="h-full flex flex-column border-round-xl shadow-2 hover:shadow-4 transition-all transition-duration-300 border-left-3 border-primary surface-card relative overflow-hidden">
+                            <ng-template pTemplate="content">
+                                <div class="flex flex-column h-full">
+                                    
+                                    <!-- Header: Badges & Status -->
+                                    <div class="flex flex-wrap align-items-start justify-content-between gap-2 mb-3 pr-6 relative">
+                                        <div class="flex flex-wrap gap-2 align-items-center w-8">
+                                            <span class="flex align-items-center gap-1 px-2 py-1 border-round text-sm font-bold uppercase" style="background: rgba(0,41,107,0.08); color: #00296b;" [title]="'Eixo: ' + (meta.eixoNome || 'N/A')">
+                                                <i class="material-icons text-sm">account_tree</i> {{ meta.eixoNome || 'N/A' }}
+                                            </span>
+                                            <span class="flex align-items-center gap-1 px-2 py-1 border-round text-sm font-bold uppercase" style="background: rgba(0,63,136,0.05); color: #003f88;" [title]="'Setor: ' + (meta.setorNome || 'N/A')">
+                                                <i class="material-icons text-sm">domain</i> {{ meta.setorNome || 'N/A' }}
+                                            </span>
+                                        </div>
+                                        <span class="absolute top-0 right-0 z-1 px-3 py-1 border-round-2xl text-xs font-bold uppercase shadow-1 text-center" [class]="getStatusBadgeClass(meta.status)">
+                                            {{ formatStatus(meta.status) }}
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Title & Subtitle -->
+                                    <h3 class="text-xl font-bold text-900 m-0 mb-1 line-height-3 text-overflow-ellipsis" style="display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3rem;" [title]="meta.titulo">{{ meta.titulo }}</h3>
+                                    <p class="text-sm text-600 m-0 mb-3 font-medium">Referência: {{ meta.artigo || '-' }}</p>
 
-                            @if (meta.status === 'EM_ANDAMENTO' || meta.status === 'EM ANDAMENTO') {
-                            <div class="metric-item highlight-alt" title="Teto Estimado">
-                                <i class="material-icons metric-icon">keyboard_double_arrow_up</i>
-                                <span class="metric-text">{{ meta.tetoEstimado | number:'1.0-0' }} Teto Estimado</span>
-                            </div>
-                            <div class="metric-item highlight-alt" title="Estimativa Real">
-                                <i class="material-icons metric-icon">trending_up</i>
-                                <span class="metric-text">{{ meta.estimativaReal | number:'1.0-0' }} Estimativa Real</span>
-                            </div>
-                            }
+                                    <!-- Metrics Wrapper (mt-auto forces it to the bottom) -->
+                                    <div class="flex flex-column gap-2 mt-auto pt-3 border-top-1 border-300" style="min-height: 9.5rem;">
+                                        <div class="flex align-items-center gap-2 px-2 py-1 border-round" style="background: rgba(240,244,248,0.4); color: #475569;" title="Pontos aplicáveis">
+                                            <i class="material-icons text-primary text-xl">military_tech</i>
+                                            <span class="text-sm font-semibold">{{ meta.pMaximo | number:'1.0-0' }} Pontos aplicáveis</span>
+                                        </div>
 
-                            @if (meta.status === 'PARCIALMENTE_CUMPRIDA' || meta.status === 'TOTALMENTE_CUMPRIDA' || meta.status === 'NAO_CUMPRIDA' || meta.status === 'CONCLUÍDA') {
-                            <div class="metric-item highlight-main" title="Pontos Atingidos">
-                                <i class="material-icons metric-icon">done_all</i>
-                                <span class="metric-text">{{ meta.pontosAtingidos | number:'1.0-0' }} Pontos Atingidos</span>
-                            </div>
-                            }
+                                        @if (meta.status === 'EM_ANDAMENTO' || meta.status === 'EM ANDAMENTO') {
+                                        <div class="flex align-items-center gap-2 px-2 py-1 border-round" style="background: rgba(253,197,0,0.1); color: #000c1e; border: 1px solid rgba(253,197,0,0.35);" title="Teto Estimado">
+                                            <i class="material-icons text-xl">keyboard_double_arrow_up</i>
+                                            <span class="text-sm font-semibold">{{ meta.tetoEstimado | number:'1.0-0' }} Teto Estimado</span>
+                                        </div>
+                                        <div class="flex align-items-center gap-2 px-2 py-1 border-round" style="background: rgba(253,197,0,0.1); color: #000c1e; border: 1px solid rgba(253,197,0,0.35);" title="Estimativa Real">
+                                            <i class="material-icons text-xl">trending_up</i>
+                                            <span class="text-sm font-semibold">{{ meta.estimativaReal | number:'1.0-0' }} Estimativa Real</span>
+                                        </div>
+                                        }
 
-                            <div class="metric-item secondary" title="Prazo Final">
-                                <i class="material-icons metric-icon">event</i>
-                                <span class="metric-text">{{ meta.deadline ? (meta.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
-                            </div>
-                        </div>
-            </ng-template>
+                                        @if (meta.status === 'PARCIALMENTE_CUMPRIDA' || meta.status === 'TOTALMENTE_CUMPRIDA' || meta.status === 'NAO_CUMPRIDA' || meta.status === 'CONCLUÍDA') {
+                                        <div class="flex align-items-center gap-2 px-2 py-1 border-round" style="background: rgba(0,63,136,0.05); color: #003f88; border: 1px solid rgba(0,63,136,0.1);" title="Pontos Atingidos">
+                                            <i class="material-icons text-xl">done_all</i>
+                                            <span class="text-sm font-bold">{{ meta.pontosAtingidos | number:'1.0-0' }} Pontos Atingidos</span>
+                                        </div>
+                                        }
 
-            <ng-template pTemplate="footer">
-                @if (auth.isCoordenador()) {
-                <div class="meta-card-footer">
-                    <button (click)="abrirModalVisualizar(meta)" class="btn-icon-action" title="Ver Detalhes">
-                        <i class="material-icons">visibility</i>
-                    </button>
-                    <button (click)="abrirModalEditar(meta)" class="btn-icon-action edit" title="Editar">
-                        <i class="material-icons">edit</i>
-                    </button>
-                    <button (click)="deletarMeta(meta)" class="btn-icon-action delete" title="Excluir">
-                        <i class="material-icons">delete</i>
-                    </button>
+                                        <div class="flex align-items-center gap-2 px-2 py-1 opacity-80" title="Prazo Final">
+                                            <i class="material-icons text-500 text-xl">event</i>
+                                            <span class="text-sm font-medium text-600">{{ meta.deadline ? (meta.deadline | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </ng-template>
+
+                            <ng-template pTemplate="footer">
+                                @if (auth.isCoordenador()) {
+                                <div class="flex justify-content-end gap-2 pt-3 px-3 border-top-1 border-300 bg-transparent">
+                                    <button (click)="abrirModalVisualizar(meta)" class="w-2rem h-2rem flex align-items-center justify-content-center bg-transparent border-none text-500 hover:text-primary hover:bg-auto border-round cursor-pointer transition-all transition-duration-200" title="Ver Detalhes">
+                                        <i class="material-icons text-lg">visibility</i>
+                                    </button>
+                                    <button (click)="abrirModalEditar(meta)" class="w-2rem h-2rem flex align-items-center justify-content-center bg-transparent border-none text-500 hover:text-blue-500 hover:bg-auto border-round cursor-pointer transition-all transition-duration-200" title="Editar">
+                                        <i class="material-icons text-lg">edit</i>
+                                    </button>
+                                    <button (click)="deletarMeta(meta)" class="w-2rem h-2rem flex align-items-center justify-content-center bg-transparent border-none text-500 hover:text-red-500 hover:bg-auto border-round cursor-pointer transition-all transition-duration-200" title="Excluir">
+                                        <i class="material-icons text-lg">delete</i>
+                                    </button>
+                                </div>
+                                }
+                            </ng-template>
+                        </p-card>
+                        } @placeholder {
+                            <div style="height: 21rem; border-radius: 0.75rem; background: rgba(0,0,0,0.03); width: 100%; border: 1px dashed #e2e8f0;"></div>
+                        }
+                    </div>
+                    }
                 </div>
-                }
-            </ng-template>
-        </p-card>
+            </p-accordion-content>
+        </p-accordion-panel>
         }
-    </div>
-
-    <!-- Controles de Paginação -->
-    @if (totalPages > 1) {
-    <div class="pagination-container">
-        <button class="btn btn-pagination" [disabled]="isFirst" (click)="paginaAnterior()">
-            ← Anterior
-        </button>
-        <span class="pagination-info">
-            Página {{ currentPage + 1 }} de {{ totalPages }}
-        </span>
-        <button class="btn btn-pagination" [disabled]="isLast" (click)="proximaPagina()">
-            Próximo →
-        </button>
-    </div>
-    }
+    </p-accordion>
     }
 </div>
 

@@ -53,6 +53,7 @@ export class MetaImportacaoComponent {
   camposSistema = [
     { label: 'Título da Meta', value: 'titulo' },
     { label: 'Descrição', value: 'descricao' },
+    { label: 'Nome do Coordenador', value: 'coordenadorNome' },
     { label: 'Eixo Temático', value: 'eixoNome' },
     { label: 'Setor Responsável', value: 'setorNome' },
     { label: 'Artigo', value: 'artigo' },

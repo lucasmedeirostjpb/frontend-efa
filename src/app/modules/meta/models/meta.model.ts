@@ -8,6 +8,8 @@ export interface Meta {
   setorId: number;
   eixoNome?: string;
   setorNome?: string;
+  coordenadorId?: number;
+  coordenadorNome?: string;
   artigo: string;
   anoCiclo: number;
   deadline: string | Date;

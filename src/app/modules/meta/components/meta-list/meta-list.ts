@@ -1,31 +1,39 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Meta } from '../../models/meta.model';
 import { MetaService } from '../../services/meta';
 import { Auth } from '../../../../core/services/auth';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
+import { AccordionModule } from 'primeng/accordion';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { MetaEstruturalModal } from '../meta-estrutural-modal/meta-estrutural-modal';
+
+interface GrupoMeta {
+  tituloGrupo: string;
+  metas: Meta[];
+}
 
 @Component({
   selector: 'app-meta-list',
-  imports: [CommonModule, DatePipe, CardModule, MetaEstruturalModal, TagModule],
+  imports: [CommonModule, DatePipe, FormsModule, CardModule, MetaEstruturalModal, TagModule, AccordionModule, SelectButtonModule],
   templateUrl: './meta-list.html',
   styleUrl: './meta-list.scss',
 })
 export class MetaList implements OnInit {
 
   metas: Meta[] = [];
+  metasAgrupadas: GrupoMeta[] = [];
   loading = true;
   error = '';
 
-  // Paginação
-  currentPage = 0;
-  totalPages = 0;
-  totalElements = 0;
-  pageSize = 10;
-  isFirst = true;
-  isLast = true;
+  // Agrupamento
+  agrupamento: 'coordenador' | 'setor' = 'coordenador';
+  agrupamentoOptions = [
+    { label: 'Por Coordenador', value: 'coordenador' },
+    { label: 'Por Setor', value: 'setor' }
+  ];
 
   // Modal Controle
   displayModal = false;
@@ -60,19 +68,15 @@ export class MetaList implements OnInit {
   carregarMetas(): void {
     this.loading = true;
     this.error = '';
-    this.metaService.listar(this.currentPage, this.pageSize).subscribe({
-      next: (page) => {
+    this.metaService.listarTodas().subscribe({
+      next: (metas) => {
         // Enriquecer metas com nomes de eixo e setor se não vierem do backend
-        this.metas = page.content.map(m => ({
+        this.metas = metas.map(m => ({
             ...m,
             eixoNome: m.eixoNome || this.eixosMap[m.eixoId] || `Eixo ${m.eixoId}`,
             setorNome: m.setorNome || this.setoresMap[m.setorId] || `Setor ${m.setorId}`
         }));
-        this.currentPage = page.number;
-        this.totalPages = page.totalPages;
-        this.totalElements = page.totalElements;
-        this.isFirst = page.first;
-        this.isLast = page.last;
+        this.agruparMetas();
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -85,18 +89,36 @@ export class MetaList implements OnInit {
     });
   }
 
-  paginaAnterior(): void {
-    if (!this.isFirst) {
-      this.currentPage--;
-      this.carregarMetas();
-    }
+  onAgrupamentoChange(): void {
+    this.agruparMetas();
   }
 
-  proximaPagina(): void {
-    if (!this.isLast) {
-      this.currentPage++;
-      this.carregarMetas();
+  agruparMetas(): void {
+    const gruposMap = new Map<string, Meta[]>();
+
+    for (const meta of this.metas) {
+      let chave = '';
+      if (this.agrupamento === 'coordenador') {
+        chave = meta.coordenadorNome || 'Sem Coordenador';
+      } else {
+        chave = meta.setorNome || 'Sem Setor';
+      }
+
+      if (!gruposMap.has(chave)) {
+        gruposMap.set(chave, []);
+      }
+      gruposMap.get(chave)!.push(meta);
     }
+
+    // Converter para array e ordenar (Sem Coordenador por último, por exemplo)
+    this.metasAgrupadas = Array.from(gruposMap.entries()).map(([titulo, metasGrupo]) => ({
+      tituloGrupo: titulo,
+      metas: metasGrupo
+    })).sort((a, b) => {
+      if (a.tituloGrupo === 'Sem Coordenador' || a.tituloGrupo === 'Sem Setor') return 1;
+      if (b.tituloGrupo === 'Sem Coordenador' || b.tituloGrupo === 'Sem Setor') return -1;
+      return a.tituloGrupo.localeCompare(b.tituloGrupo);
+    });
   }
 
   deletarMeta(meta: Meta): void {
