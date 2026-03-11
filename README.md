@@ -398,3 +398,61 @@ Em produção, configure um proxy reverso (Nginx, Apache) para rotear `/api` par
 ## 📝 Licença
 
 Projeto interno — TJPB.
+[// ------------------------------------------------------------]
+# 🧩 Funcionamento Detalhado
+
+## Fluxo Principal
+
+1. **Login**: Usuário acessa o sistema e autentica via Keycloak (SSO). O botão "Entrar" aparece se não autenticado.
+2. **Listagem de Metas**: Após login, a rota `/metas` exibe um grid de cards paginados, cada um representando uma meta.
+3. **Visualização/Edição**: Ao clicar em "Visualizar" ou "Editar", abre-se um modal (PrimeNG Dialog) com detalhes da meta. O modo de edição é restrito a coordenadores.
+4. **Criação de Meta**: Coordenadores podem criar novas metas via botão "Nova Meta", abrindo o modal em modo de criação.
+5. **Importação em Lote**: Coordenadores acessam `/metas/importar` para importar metas via Excel/CSV, com mapeamento dinâmico.
+6. **Permissões**: Ações de criar, editar, excluir e importar são protegidas por role COORDENADOR, tanto no frontend (UI oculta) quanto no backend (token JWT validado).
+7. **Logout**: Usuário pode sair pelo botão "Sair", encerrando a sessão.
+
+## Principais Componentes
+
+- **Navbar**: Barra superior com logo, links, login/logout, nome e role do usuário.
+- **MetaList**: Grid de cards de metas, com paginação, filtros, badges de status, setor e eixo.
+- **MetaEstruturalModal**: Modal para edição/visualização de meta, com validação reativa, campos condicionais e dashboard visual.
+- **MetaImportacao**: Tela de upload de planilhas, mapeamento de colunas e processamento em lote.
+- **Guards**: Protegem rotas e ações por role.
+- **Services**: Abstraem chamadas HTTP, autenticação e manipulação de dados.
+
+## Integração e Comunicação
+
+- **API Polvo**: Todas as operações CRUD, histórico e importação são feitas via endpoints REST.
+- **Keycloak**: Autenticação OAuth2/OIDC, roles e tokens.
+- **Interceptor**: Anexa JWT em todas as requisições, renova token automaticamente.
+- **Proxy**: Em dev, `/api` é redirecionado para o backend local.
+
+## Animações e UX
+
+- **Modal**: Animação customizada ao fechar (fade-out, slide-down), padrão ao abrir.
+- **Cards**: Elevação e barra dourada em hover.
+- **Inputs**: Focus ring azul, micro-interações.
+- **Validação**: Feedback visual dinâmico, hints e asteriscos.
+
+## Acessibilidade
+
+- **WCAG AA**: Contraste, foco, ARIA, navegação por teclado.
+- **AXE checks**: Todos os componentes passam em testes de acessibilidade.
+- **Responsividade**: Layout adaptável de 1 a 4 colunas.
+
+## Dicas de Uso
+
+- Para importar metas, use planilhas com colunas nomeadas conforme o modelo de dados.
+- Campos obrigatórios são marcados com asterisco vermelho e hints.
+- Coordenadores têm acesso a funcionalidades administrativas; demais usuários apenas visualizam.
+- Para customizar estilos, edite `scss/styles.scss` e tokens em `_variables.scss`.
+- Para alterar endpoints ou Keycloak, edite `environment.ts`.
+
+## Troubleshooting
+
+- Se o login não funcionar, verifique o Keycloak e o endpoint no ambiente.
+- Se a importação falhar, revise o formato da planilha e os campos obrigatórios.
+- Para erros de build, cheque dependências no `package.json` e budgets em `angular.json`.
+
+---
+Para dúvidas técnicas, consulte o código fonte e a documentação inline nos serviços e modelos.

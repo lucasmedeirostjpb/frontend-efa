@@ -23,6 +23,40 @@ export interface Meta {
   observacoes?: string;
 }
 
+export interface MetaEstruturalUpdatePayload {
+  titulo: string;
+  descricao: string;
+  eixoId?: number | null;
+  eixoNome?: string;
+  setorId?: number | null;
+  setorNome?: string;
+  coordenadorId?: number | null;
+  coordenadorNome?: string;
+  artigo: string;
+  anoCiclo: number;
+  deadline: string | Date | null;
+  status: string;
+  nivelDificuldade?: string;
+  evidenciasAuditoria?: string;
+  observacoes?: string;
+  pMaximo: number;
+  estimativaReal: number;
+  tetoEstimado: number;
+  pontosAtingidos: number;
+}
+
+export interface MetaAcompanhamentoUpdatePayload {
+  status: string;
+  nivelDificuldade?: string;
+  evidenciasAuditoria?: string;
+  observacoes?: string;
+  estimativaReal: number;
+  tetoEstimado: number;
+  pontosAtingidos: number;
+}
+
+export type MetaCreatePayload = MetaEstruturalUpdatePayload;
+
 /**
  * Interface genérica para resposta paginada do Spring Boot (Page<T>).
  */

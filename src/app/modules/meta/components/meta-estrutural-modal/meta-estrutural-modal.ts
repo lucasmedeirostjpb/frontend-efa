@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
@@ -9,12 +9,38 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { MotionOptions } from '@primeuix/motion';
-import { Meta, Eixo, Setor } from '../../models/meta.model';
+import {
+  Eixo,
+  Meta,
+  MetaAcompanhamentoUpdatePayload,
+  MetaCreatePayload,
+  MetaEstruturalUpdatePayload,
+  Setor,
+} from '../../models/meta.model';
 import { MetaService } from '../../services/meta';
 import { EixoService } from '../../services/eixo.service';
 import { SetorService } from '../../services/setor.service';
 import { CoordenadorService, Coordenador } from '../../services/coordenador.service';
 import { Auth } from '../../../../core/services/auth';
+
+interface MetaFormValue {
+  titulo: string;
+  descricao: string;
+  status: string;
+  eixoId: number | null;
+  setorId: number | null;
+  coordenadorId: number | null;
+  artigo: string;
+  anoCiclo: number;
+  deadline: Date | null;
+  pMaximo: number;
+  estimativaReal: number | null;
+  tetoEstimado: number | null;
+  pontosAtingidos: number | null;
+  nivelDificuldade: string;
+  evidenciasAuditoria: string;
+  observacoes: string;
+}
 
 @Component({
   selector: 'app-meta-estrutural-modal',
@@ -338,23 +364,9 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
     }
 
     this.isSaving = true;
-    
-    // getRawValue garante que campos desabilitados (como pMaximo se estiver travado) sejam incluídos
-    const formValue = this.metaForm.getRawValue();
 
-    const payload = {
-      ...formValue,
-      id: this.metaParaEditar ? this.metaParaEditar.id : undefined,
-      pMaximo: this.isCoordenadorAndEditing() ? this.metaParaEditar?.pMaximo : formValue.pMaximo,
-      // Garantir que não enviamos nulos para campos numéricos que o back pode validar
-      estimativaReal: formValue.estimativaReal ?? 0,
-      tetoEstimado: formValue.tetoEstimado ?? 0,
-      pontosAtingidos: formValue.pontosAtingidos ?? 0
-    };
-
-    const request$ = this.metaParaEditar 
-      ? this.metaService.atualizar(this.metaParaEditar.id, payload)
-      : this.metaService.criar(payload);
+    const formValue = this.metaForm.getRawValue() as MetaFormValue;
+    const request$ = this.criarRequisicaoSalvamento(formValue);
 
     request$.subscribe({
       next: (metaSalva) => {
@@ -367,6 +379,61 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
         this.isSaving = false;
       }
     });
+  }
+
+  private criarRequisicaoSalvamento(formValue: MetaFormValue): Observable<Meta> {
+    if (!this.metaParaEditar) {
+      return this.metaService.criar(this.criarPayloadEstrutural(formValue));
+    }
+
+    if (this.isCoordenadorAndEditing()) {
+      return this.metaService.updateMetaAcompanhamento(
+        this.metaParaEditar.id,
+        this.criarPayloadAcompanhamento(formValue)
+      );
+    }
+
+    return this.metaService.updateMetaEstrutural(
+      this.metaParaEditar.id,
+      this.criarPayloadEstrutural(formValue)
+    );
+  }
+
+  private criarPayloadEstrutural(formValue: MetaFormValue): MetaCreatePayload | MetaEstruturalUpdatePayload {
+    return {
+      titulo: formValue.titulo,
+      descricao: formValue.descricao,
+      eixoId: formValue.eixoId,
+      setorId: formValue.setorId,
+      coordenadorId: formValue.coordenadorId ?? null,
+      artigo: formValue.artigo,
+      anoCiclo: formValue.anoCiclo,
+      deadline: formValue.deadline,
+      status: formValue.status,
+      nivelDificuldade: formValue.nivelDificuldade,
+      evidenciasAuditoria: formValue.evidenciasAuditoria,
+      observacoes: formValue.observacoes,
+      pMaximo: this.normalizarNumero(formValue.pMaximo),
+      estimativaReal: this.normalizarNumero(formValue.estimativaReal),
+      tetoEstimado: this.normalizarNumero(formValue.tetoEstimado),
+      pontosAtingidos: this.normalizarNumero(formValue.pontosAtingidos),
+    };
+  }
+
+  private criarPayloadAcompanhamento(formValue: MetaFormValue): MetaAcompanhamentoUpdatePayload {
+    return {
+      status: formValue.status,
+      nivelDificuldade: formValue.nivelDificuldade,
+      evidenciasAuditoria: formValue.evidenciasAuditoria,
+      observacoes: formValue.observacoes,
+      estimativaReal: this.normalizarNumero(formValue.estimativaReal),
+      tetoEstimado: this.normalizarNumero(formValue.tetoEstimado),
+      pontosAtingidos: this.normalizarNumero(formValue.pontosAtingidos),
+    };
+  }
+
+  private normalizarNumero(value: number | null | undefined): number {
+    return value ?? 0;
   }
 
   excluirMeta(): void {

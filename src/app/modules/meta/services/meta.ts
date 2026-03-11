@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Meta, Page, HistoricoAlteracao } from '../models/meta.model';
+import {
+  HistoricoAlteracao,
+  Meta,
+  MetaAcompanhamentoUpdatePayload,
+  MetaCreatePayload,
+  MetaEstruturalUpdatePayload,
+  Page,
+} from '../models/meta.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -48,31 +55,39 @@ export class MetaService {
 
   /**
    * POST /api/metas - Cria uma nova meta.
-   * Requer role COORDENADOR (token via interceptor).
+   * Requer role com permissão para criação estrutural.
    */
-  criar(meta: Partial<Meta>): Observable<Meta> {
+  criar(meta: MetaCreatePayload): Observable<Meta> {
     return this.http.post<Meta>(this.apiUrl, meta);
   }
 
   /**
    * POST /api/metas/batch - Cria metas em lote.
-   * Requer role COORDENADOR.
+   * Requer role com permissão para criação estrutural.
    */
-  criarEmLote(metas: Partial<Meta>[]): Observable<Meta[]> {
+  criarEmLote(metas: Array<Partial<MetaCreatePayload>>): Observable<Meta[]> {
     return this.http.post<Meta[]>(`${this.apiUrl}/batch`, metas);
   }
 
   /**
-   * PUT /api/metas/:id - Atualiza uma meta existente.
-   * Requer role COORDENADOR (token via interceptor).
+   * PUT /api/metas/:id - Atualiza estruturalmente uma meta existente.
+   * Requer role DIGOV.
    */
-  atualizar(id: string, meta: Partial<Meta>): Observable<Meta> {
+  updateMetaEstrutural(id: string, meta: MetaEstruturalUpdatePayload): Observable<Meta> {
     return this.http.put<Meta>(`${this.apiUrl}/${id}`, meta);
   }
 
   /**
+   * PUT /api/metas/:id/acompanhamento - Atualiza apenas o acompanhamento de uma meta.
+   * Requer role COORDENADOR dono da meta.
+   */
+  updateMetaAcompanhamento(id: string, meta: MetaAcompanhamentoUpdatePayload): Observable<Meta> {
+    return this.http.put<Meta>(`${this.apiUrl}/${id}/acompanhamento`, meta);
+  }
+
+  /**
    * DELETE /api/metas/:id - Exclui uma meta.
-   * Requer role COORDENADOR (token via interceptor).
+   * Requer role DIGOV.
    */
   deletar(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
