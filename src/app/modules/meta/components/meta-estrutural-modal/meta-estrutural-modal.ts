@@ -8,6 +8,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
+import { MotionOptions } from '@primeuix/motion';
 import { Meta, Eixo, Setor } from '../../models/meta.model';
 import { MetaService } from '../../services/meta';
 import { EixoService } from '../../services/eixo.service';
@@ -36,8 +37,14 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
   @Input() metaParaEditar: Meta | null = null;
   @Input() readonly = false;
   @Output() displayChange = new EventEmitter<boolean>();
-  @Output() salvoSucesso = new EventEmitter<void>();
-  @Output() excluidoSucesso = new EventEmitter<void>();
+  @Output() salvoSucesso = new EventEmitter<Meta>();
+  @Output() excluidoSucesso = new EventEmitter<string>();
+
+  readonly dialogMotionOptions: MotionOptions = {
+    type: 'animation',
+    duration: { leave: 300 },
+    leaveClass: { active: 'meta-dialog-leave-active' },
+  };
 
   metaForm: FormGroup;
   isSaving = false;
@@ -350,9 +357,9 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
       : this.metaService.criar(payload);
 
     request$.subscribe({
-      next: () => {
+      next: (metaSalva) => {
         this.isSaving = false;
-        this.salvoSucesso.emit();
+        this.salvoSucesso.emit(metaSalva);
       },
       error: (err) => {
         console.error('Erro ao salvar meta', err);
@@ -367,6 +374,8 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
       return;
     }
 
+    const metaId = this.metaParaEditar.id;
+
     const confirmado = window.confirm(`Deseja realmente excluir a meta "${this.metaParaEditar.titulo}"?`);
     if (!confirmado) {
       return;
@@ -378,7 +387,7 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
       next: () => {
         this.isDeleting = false;
         this.fechar();
-        this.excluidoSucesso.emit();
+        this.excluidoSucesso.emit(metaId);
       },
       error: (err) => {
         console.error('Erro ao excluir meta', err);

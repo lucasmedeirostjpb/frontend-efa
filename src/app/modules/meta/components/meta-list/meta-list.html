@@ -83,7 +83,7 @@
         </div>
     </div>
 
-    <p-accordion [multiple]="true">
+    <p-accordion [multiple]="true" [value]="gruposExpandidos" (valueChange)="onAccordionValueChange($event)">
         @for (grupo of metasAgrupadas; track grupo.tituloGrupo) {
         <p-accordion-panel [value]="grupo.tituloGrupo">
             <p-accordion-header>
@@ -196,5 +196,5 @@
     [metaParaEditar]="metaSelecionada"
     [readonly]="readonlyModal"
     (displayChange)="displayModal = $event"
-    (salvoSucesso)="onMetaSalva()"
-    (excluidoSucesso)="onMetaExcluida()"></app-meta-estrutural-modal>
+    (salvoSucesso)="onMetaSalva($event)"
+    (excluidoSucesso)="onMetaExcluida($event)"></app-meta-estrutural-modal>

@@ -51,6 +51,7 @@ export class MetaList implements OnInit {
     { label: 'Por Coordenador', value: 'coordenador' },
     { label: 'Por Setor', value: 'setor' },
   ];
+  gruposExpandidos: string[] = [];
 
   displayModal = false;
   metaSelecionada: Meta | null = null;
@@ -128,6 +129,17 @@ export class MetaList implements OnInit {
     this.metasAgrupadas = Array.from(grupos, ([tituloGrupo, metas]) => ({ tituloGrupo, metas })).sort(
       ({ tituloGrupo: grupoA }, { tituloGrupo: grupoB }) => this.compararGrupos(grupoA, grupoB),
     );
+
+    this.sincronizarGruposExpandidos();
+  }
+
+  onAccordionValueChange(value: string | number | Array<string | number> | undefined | null): void {
+    if (Array.isArray(value)) {
+      this.gruposExpandidos = value.map((item) => String(item));
+      return;
+    }
+
+    this.gruposExpandidos = value !== null && value !== undefined ? [String(value)] : [];
   }
 
   private enriquecerMeta(meta: Meta): Meta {
@@ -197,15 +209,33 @@ export class MetaList implements OnInit {
     void this.router.navigate(['/metas/importar']);
   }
 
-  onMetaSalva(): void {
-    this.displayModal = false;
-    this.carregarMetas();
-  }
+  onMetaSalva(metaSalva: Meta): void {
+    const metaAtualizada = this.enriquecerMeta(metaSalva);
+    const indiceMeta = this.metas.findIndex(({ id }) => id === metaAtualizada.id);
 
-  onMetaExcluida(): void {
+    if (indiceMeta >= 0) {
+      this.metas = this.metas.map((meta) => (meta.id === metaAtualizada.id ? metaAtualizada : meta));
+    } else {
+      this.metas = [...this.metas, metaAtualizada];
+    }
+
+    const tituloGrupoAtual = this.obterTituloGrupo(metaAtualizada);
+    if (!this.gruposExpandidos.includes(tituloGrupoAtual)) {
+      this.gruposExpandidos = [...this.gruposExpandidos, tituloGrupoAtual];
+    }
+
     this.displayModal = false;
     this.metaSelecionada = null;
-    this.carregarMetas();
+    this.agruparMetas();
+    this.cdr.markForCheck();
+  }
+
+  onMetaExcluida(metaId: string): void {
+    this.displayModal = false;
+    this.metaSelecionada = null;
+    this.metas = this.metas.filter((meta) => meta.id !== metaId);
+    this.agruparMetas();
+    this.cdr.markForCheck();
   }
 
   getCardStyleClass(status: string | undefined): string {
@@ -295,5 +325,10 @@ export class MetaList implements OnInit {
       default:
         return 'neutral';
     }
+  }
+
+  private sincronizarGruposExpandidos(): void {
+    const gruposDisponiveis = new Set(this.metasAgrupadas.map(({ tituloGrupo }) => tituloGrupo));
+    this.gruposExpandidos = this.gruposExpandidos.filter((tituloGrupo) => gruposDisponiveis.has(tituloGrupo));
   }
 }

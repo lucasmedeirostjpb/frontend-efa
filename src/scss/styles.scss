@@ -100,3 +100,14 @@ button {
 button, a, input, select, textarea {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.meta-dialog-leave-active {
+  animation: demo-dialog-out 300ms ease-in;
+}
+
+@keyframes demo-dialog-out {
+  to {
+    opacity: 0;
+    transform: translateY(200%) rotate(-90deg);
+  }
+}
