@@ -51,7 +51,7 @@ export class MetaImportacaoComponent {
   loading = false;
   
   camposSistema = [
-    { label: 'Título da Meta', value: 'titulo' },
+    { label: 'Título do Requisito', value: 'titulo' },
     { label: 'Descrição', value: 'descricao' },
     { label: 'Eixo Temático', value: 'eixoNome' },
     { label: 'Setor Responsável', value: 'setorNome' },
@@ -224,7 +224,7 @@ export class MetaImportacaoComponent {
     this.messageService.add({ 
       severity: 'info', 
       summary: 'Iniciando Importação', 
-      detail: `Processando ${itemsParaCriar.length} metas em lote...` 
+      detail: `Processando ${itemsParaCriar.length} requisitos em lote...` 
     });
 
     console.log('Enviando para o lote (primeiro item):', itemsParaCriar[0]);
@@ -239,7 +239,7 @@ export class MetaImportacaoComponent {
         this.messageService.add({ 
           severity: 'success', 
           summary: 'Importação Concluída', 
-          detail: `${results.length} metas criadas com sucesso.` 
+          detail: `${results.length} requisitos criados com sucesso.` 
         });
         
         setTimeout(() => {
@@ -251,7 +251,7 @@ export class MetaImportacaoComponent {
         this.messageService.add({ 
           severity: 'error', 
           summary: 'Erro na Importação', 
-          detail: 'Falha ao processar o lote de metas. Verifique o console para detalhes.' 
+          detail: 'Falha ao processar o lote de requisitos. Verifique o console para detalhes.' 
         });
       }
     });

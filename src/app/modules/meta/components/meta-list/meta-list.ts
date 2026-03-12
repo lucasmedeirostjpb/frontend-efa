@@ -92,8 +92,8 @@ export class MetaList implements OnInit {
         this.agruparMetas();
       },
       error: (err: unknown) => {
-        console.error('Erro ao carregar metas', err);
-        this.error = 'Não foi possível carregar as metas. Tente novamente.';
+        console.error('Erro ao carregar requisitos', err);
+        this.error = 'Não foi possível carregar os requisitos. Tente novamente.';
       },
     });
   }

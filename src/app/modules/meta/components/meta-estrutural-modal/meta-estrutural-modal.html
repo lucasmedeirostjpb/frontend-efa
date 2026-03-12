@@ -1,5 +1,5 @@
 <p-dialog
-  [header]="readonly ? 'Visualizar Meta' : (metaParaEditar ? 'Editar Meta Institucional' : 'Nova Meta Institucional')"
+  [header]="readonly ? 'Visualizar Requisito' : (metaParaEditar ? 'Editar Requisito Institucional' : 'Novo Requisito Institucional')"
   [(visible)]="display"
   [modal]="true"
   [style]="{ width: '54rem' }"
@@ -66,7 +66,7 @@
       </div>
 
       @if (showDigovEditSections()) {
-      <div class="edit-section-toggle" role="tablist" aria-label="Alternar modo de edição da meta">
+      <div class="edit-section-toggle" role="tablist" aria-label="Alternar modo de edição do requisito">
         <button
           type="button"
           class="edit-section-toggle__button"
@@ -97,9 +97,9 @@
         <div class="section-group__header">
           <h3 class="section-title">
             <i class="material-icons">account_tree</i>
-            <span>Estrutura da Meta</span>
+            <span>Estrutura do Requisito</span>
           </h3>
-          <p class="section-description">Defina o escopo institucional, os responsáveis e os dados-base da meta.</p>
+          <p class="section-description">Defina o escopo institucional, os responsáveis e os dados-base do requisito.</p>
         </div>
 
         <div class="grid p-fluid section-group__grid">
@@ -111,7 +111,7 @@
               pInputText
               id="titulo"
               formControlName="titulo"
-              placeholder="Digite o título da meta"
+              placeholder="Digite o título do requisito"
               class="w-full"
               aria-required="true"
               [attr.aria-invalid]="metaForm.get('titulo')?.invalid && metaForm.get('titulo')?.touched ? 'true' : 'false'"
@@ -123,7 +123,7 @@
 
           <div class="field col-12">
             <label for="descricao" class="font-semibold">Descrição</label>
-            <textarea pTextarea id="descricao" formControlName="descricao" rows="4" placeholder="Detalhes adicionais da meta" class="w-full"></textarea>
+            <textarea pTextarea id="descricao" formControlName="descricao" rows="4" placeholder="Detalhes adicionais do requisito" class="w-full"></textarea>
           </div>
 
           <div class="field col-12 md:col-4 field--required" [class.field--invalid]="metaForm.get('eixoId')?.invalid && metaForm.get('eixoId')?.touched">
@@ -265,7 +265,7 @@
             <i class="material-icons">functions</i>
             <span>Execução e Resultados</span>
           </h3>
-          <p class="section-description">Preencha apenas os indicadores compatíveis com o estágio atual da meta.</p>
+          <p class="section-description">Preencha apenas os indicadores compatíveis com o estágio atual do requisito.</p>
         </div>
 
         <div class="grid p-fluid section-group__grid">
@@ -310,7 +310,7 @@
             @if (isStatusConclusao()) {
             <div class="field-note__content field-note__content--warning">
               <i class="material-icons">warning</i>
-              <span>Evidências para auditoria passam a ser obrigatórias quando a meta entra em status de conclusão.</span>
+              <span>Evidências para auditoria passam a ser obrigatórias quando o requisito entra em status de conclusão.</span>
             </div>
             } @else {
             <div class="field-note__content">
@@ -332,7 +332,7 @@
               id="evidenciasAuditoria"
               formControlName="evidenciasAuditoria"
               rows="5"
-              placeholder="Descreva as evidências que comprovam o cumprimento da meta..."
+              placeholder="Descreva as evidências que comprovam o cumprimento do requisito..."
               class="w-full"
               [attr.aria-required]="isStatusConclusao() ? 'true' : 'false'"
               [attr.aria-invalid]="metaForm.get('evidenciasAuditoria')?.invalid && metaForm.get('evidenciasAuditoria')?.touched ? 'true' : 'false'"
@@ -340,7 +340,7 @@
             @if (isStatusConclusao()) {
             <small class="char-hint">
               <i class="material-icons">info</i>
-              Mínimo de 20 caracteres quando a meta estiver concluída, parcialmente cumprida ou não cumprida.
+              Mínimo de 20 caracteres quando o requisito estiver concluído, parcialmente cumprido ou não cumprido.
             </small>
             }
             @if (metaForm.get('evidenciasAuditoria')?.invalid && metaForm.get('evidenciasAuditoria')?.touched) {
@@ -555,7 +555,7 @@
           @if (isSaving) {
           <i class="material-icons btn-icon spin-icon">autorenew</i> Salvando...
           } @else {
-          <i class="material-icons btn-icon">check</i> Salvar Meta
+          <i class="material-icons btn-icon">check</i> Salvar Requisito
           }
         </button>
       </div>

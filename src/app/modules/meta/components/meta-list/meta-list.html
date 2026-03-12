@@ -1,8 +1,8 @@
 <div class="meta-list-container px-4 py-4">
     <div class="flex flex-column md:flex-row md:align-items-center justify-content-between gap-3 mb-5">
         <div class="flex flex-column gap-2">
-            <h1 class="page-title">Metas</h1>
-            <p class="page-subtitle">Gerencie as metas do Prêmio CNJ de Qualidade</p>
+            <h1 class="page-title">Requisitos</h1>
+            <p class="page-subtitle">Gerencie os requisitos do Prêmio CNJ de Qualidade</p>
         </div>
 
         @if (auth.isDigov()) {
@@ -24,7 +24,7 @@
                 (click)="abrirModalNovaMeta()"
             >
                 <i class="material-icons text-base">add</i>
-                <span>Nova Meta</span>
+                <span>Novo Requisito</span>
             </button>
         </div>
         }
@@ -32,8 +32,8 @@
 
     @if (loading) {
     <div class="surface-card border-round-xl p-6 flex flex-column align-items-center justify-content-center gap-3" aria-live="polite">
-        <p-progressSpinner strokeWidth="4" ariaLabel="Carregando metas"></p-progressSpinner>
-        <p class="m-0 text-color-secondary">Carregando metas...</p>
+        <p-progressSpinner strokeWidth="4" ariaLabel="Carregando requisitos"></p-progressSpinner>
+        <p class="m-0 text-color-secondary">Carregando requisitos...</p>
     </div>
     }
 
@@ -56,14 +56,14 @@
     @if (!loading && !error && metasAgrupadas.length === 0) {
     <div class="surface-card border-1 border-300 border-round-xl p-6 flex flex-column align-items-center text-center gap-3">
         <i class="material-icons text-3xl text-color-secondary">assignment</i>
-        <p class="m-0 text-lg font-semibold text-color">Nenhuma meta cadastrada</p>
-        <p class="m-0 text-color-secondary">As metas aparecerão aqui assim que forem registradas.</p>
+        <p class="m-0 text-lg font-semibold text-color">Nenhum requisito cadastrado</p>
+        <p class="m-0 text-color-secondary">Os requisitos aparecerão aqui assim que forem registrados.</p>
     </div>
     }
 
     @if (!loading && !error && metasAgrupadas.length > 0) {
     <div class="flex justify-content-end mb-4">
-        <div class="meta-view-toggle" role="group" aria-label="Alternar agrupamento das metas">
+        <div class="meta-view-toggle" role="group" aria-label="Alternar agrupamento dos requisitos">
             <button
                 type="button"
                 class="meta-view-toggle__button"
@@ -89,7 +89,7 @@
             <p-accordion-header>
                 <div class="flex flex-wrap align-items-center gap-2">
                     <span class="font-semibold text-color">{{ grupo.tituloGrupo }}</span>
-                    <p-tag [value]="grupo.metas.length.toString() + ' metas'" severity="info"></p-tag>
+                    <p-tag [value]="grupo.metas.length.toString() + ' requisitos'" severity="info"></p-tag>
                 </div>
             </p-accordion-header>
 
@@ -103,7 +103,7 @@
                             [style]="{ overflow: 'hidden' }"
                             role="button"
                             tabindex="0"
-                            [attr.aria-label]="auth.podeEditarMeta(meta) ? 'Editar meta ' + meta.titulo : 'Visualizar meta ' + meta.titulo"
+                            [attr.aria-label]="auth.podeEditarMeta(meta) ? 'Editar requisito ' + meta.titulo : 'Visualizar requisito ' + meta.titulo"
                             (click)="abrirMeta(meta)"
                             (keydown)="onMetaCardKeydown($event, meta)"
                         >

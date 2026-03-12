@@ -374,8 +374,8 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
         this.salvoSucesso.emit(metaSalva);
       },
       error: (err) => {
-        console.error('Erro ao salvar meta', err);
-        alert('Ocorreu um erro ao salvar a meta. Tente novamente.');
+        console.error('Erro ao salvar requisito', err);
+        alert('Ocorreu um erro ao salvar o requisito. Tente novamente.');
         this.isSaving = false;
       }
     });
@@ -443,7 +443,7 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
 
     const metaId = this.metaParaEditar.id;
 
-    const confirmado = window.confirm(`Deseja realmente excluir a meta "${this.metaParaEditar.titulo}"?`);
+    const confirmado = window.confirm(`Deseja realmente excluir o requisito "${this.metaParaEditar.titulo}"?`);
     if (!confirmado) {
       return;
     }
@@ -457,8 +457,8 @@ export class MetaEstruturalModal implements OnChanges, OnInit {
         this.excluidoSucesso.emit(metaId);
       },
       error: (err) => {
-        console.error('Erro ao excluir meta', err);
-        alert('Ocorreu um erro ao excluir a meta. Tente novamente.');
+        console.error('Erro ao excluir requisito', err);
+        alert('Ocorreu um erro ao excluir o requisito. Tente novamente.');
         this.isDeleting = false;
       }
     });
