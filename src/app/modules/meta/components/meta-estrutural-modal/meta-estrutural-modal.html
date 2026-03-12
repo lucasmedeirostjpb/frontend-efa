@@ -407,42 +407,6 @@
           }
         </div>
 
-        <section class="section-group section-group--readonly">
-          <div class="section-group__header">
-            <h3 class="section-title">
-              <i class="material-icons">info</i>
-              <span>Estrutura e Dados Base</span>
-            </h3>
-          </div>
-
-          <div class="info-grid">
-            <div class="info-card">
-              <span class="info-label">Eixo Temático</span>
-              <span class="info-value">{{ getEixoNome(metaParaEditar.eixoId) }}</span>
-            </div>
-            <div class="info-card">
-              <span class="info-label">Setor Responsável</span>
-              <span class="info-value">{{ getSetorNome(metaParaEditar.setorId) }}</span>
-            </div>
-            <div class="info-card">
-              <span class="info-label">Coordenador</span>
-              <span class="info-value">{{ metaParaEditar.coordenadorNome || 'Sem coordenador' }}</span>
-            </div>
-            <div class="info-card">
-              <span class="info-label">Artigo</span>
-              <span class="info-value">{{ metaParaEditar.artigo || 'Não informado' }}</span>
-            </div>
-            <div class="info-card">
-              <span class="info-label">Ano do Ciclo</span>
-              <span class="info-value">{{ metaParaEditar.anoCiclo }}</span>
-            </div>
-            <div class="info-card">
-              <span class="info-label">Prazo</span>
-              <span class="info-value">{{ metaParaEditar.deadline ? (metaParaEditar.deadline | date:'dd/MM/yyyy') : 'Sem prazo definido' }}</span>
-            </div>
-          </div>
-        </section>
-
         @if (metaParaEditar.status === 'EM_ANDAMENTO') {
         <section class="section-group section-group--readonly">
           <div class="section-group__header">
