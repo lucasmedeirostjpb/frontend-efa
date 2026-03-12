@@ -188,7 +188,9 @@ export class MetaList implements OnInit {
   }
 
   abrirMeta(meta: Meta): void {
-    if (this.auth.podeEditarMeta(meta)) {
+    const podeEditar = this.auth.podeEditarMeta(meta);
+
+    if (podeEditar) {
       this.abrirModalEditar(meta);
       return;
     }

@@ -9,7 +9,7 @@
   [dismissableMask]="true"
   [motionOptions]="dialogMotionOptions"
   styleClass="meta-dialog"
-  (onHide)="fechar()"
+  (onHide)="onDialogHide()"
 >
   @if (!readonly) {
   <form [formGroup]="metaForm">
@@ -25,6 +25,12 @@
         </div>
 
         <div class="hero-chips">
+          @if (showPerfilBadge()) {
+          <span [class]="getPerfilBadgeClass()">
+            <i class="material-icons">{{ getPerfilBadgeIcon() }}</i>
+            {{ getPerfilBadgeLabel() }}
+          </span>
+          }
           <span class="hero-chip">
             <i class="material-icons">account_tree</i>
             {{ getEixoNome(metaForm.get('eixoId')?.value) }}
@@ -60,12 +66,7 @@
       </div>
       }
 
-      <div class="form-legend">
-        <i class="material-icons">info</i>
-        <span>Campos marcados com <strong>*</strong> são obrigatórios.</span>
-      </div>
-
-      @if (showDigovEditSections()) {
+      @if (canShowSectionTabs()) {
       <div class="edit-section-toggle" role="tablist" aria-label="Alternar modo de edição do requisito">
         <button
           type="button"
@@ -78,6 +79,7 @@
           <i class="material-icons">edit_note</i>
           <span>Preenchimento</span>
         </button>
+        @if (canViewEstruturaTab()) {
         <button
           type="button"
           class="edit-section-toggle__button"
@@ -89,10 +91,31 @@
           <i class="material-icons">account_tree</i>
           <span>Estrutura</span>
         </button>
+        }
+        @if (canViewHistoricoTab()) {
+        <button
+          type="button"
+          class="edit-section-toggle__button"
+          [class.edit-section-toggle__button--active]="editSection === 'historico'"
+          [attr.aria-selected]="editSection === 'historico'"
+          role="tab"
+          (click)="setEditSection('historico')"
+        >
+          <i class="material-icons">history</i>
+          <span>Historico</span>
+        </button>
+        }
       </div>
       }
 
-      @if (!isCoordenadorAndEditing() && showEstruturaFields()) {
+      @if (!showHistoricoSection()) {
+      <div class="form-legend">
+        <i class="material-icons">info</i>
+        <span>Campos marcados com <strong>*</strong> são obrigatórios.</span>
+      </div>
+      }
+
+      @if (!isAcompanhamentoEditor() && showEstruturaFields()) {
       <section class="section-group">
         <div class="section-group__header">
           <h3 class="section-title">
@@ -359,6 +382,70 @@
         </div>
       </section>
       }
+
+      @if (showHistoricoSection()) {
+      <section class="section-group" aria-live="polite">
+        <div class="section-group__header">
+          <h3 class="section-title">
+            <i class="material-icons">history</i>
+            <span>Histórico</span>
+          </h3>
+          <p class="section-description">Acompanhe as alterações registradas para este requisito.</p>
+        </div>
+
+        @if (historicoLoading) {
+        <div class="history-state">
+          <i class="material-icons spin-icon">autorenew</i>
+          <span>Carregando histórico...</span>
+        </div>
+        } @else if (historicoError) {
+        <div class="history-state history-state--error">
+          <i class="material-icons">warning</i>
+          <span>{{ historicoError }}</span>
+        </div>
+        } @else if (historico.length === 0) {
+        <div class="history-state">
+          <i class="material-icons">history_toggle_off</i>
+          <span>Nenhuma alteração registrada até o momento.</span>
+        </div>
+        } @else {
+        <div class="history-timeline">
+          @for (alteracao of historico; track alteracao.id + '-' + $index) {
+          <article class="history-entry">
+            <div class="history-entry__top">
+              <span [class]="'history-badge ' + getHistoricoTipoClass(alteracao.tipoMudanca)">
+                {{ getHistoricoTipoLabel(alteracao.tipoMudanca) }}
+              </span>
+              <span class="history-entry__date">{{ alteracao.dataHora | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+
+            <div class="history-entry__author">
+              <i class="material-icons">person</i>
+              <span>{{ alteracao.autor || 'Sistema' }}</span>
+            </div>
+
+            @if (alteracao.propriedadesAlteradas.length > 0) {
+            <div class="history-changes">
+              @for (propriedade of alteracao.propriedadesAlteradas; track propriedade.propriedade + '-' + $index) {
+              <div class="history-change">
+                <span class="history-change__field">{{ formatHistoricoFieldLabel(propriedade.propriedade) }}</span>
+                <div class="history-change__values">
+                  <span class="history-change__value history-change__value--old">{{ formatHistoricoValue(propriedade.propriedade, propriedade.valorAntigo) }}</span>
+                  <i class="material-icons">east</i>
+                  <span class="history-change__value history-change__value--new">{{ formatHistoricoValue(propriedade.propriedade, propriedade.valorNovo) }}</span>
+                </div>
+              </div>
+              }
+            </div>
+            } @else {
+            <p class="history-entry__empty">Sem detalhes adicionais para esta alteração.</p>
+            }
+          </article>
+          }
+        </div>
+        }
+      </section>
+      }
     </div>
   </form>
   } @else {
@@ -375,6 +462,12 @@
           </div>
 
           <div class="hero-chips">
+            @if (showPerfilBadge()) {
+            <span [class]="getPerfilBadgeClass()">
+              <i class="material-icons">{{ getPerfilBadgeIcon() }}</i>
+              {{ getPerfilBadgeLabel() }}
+            </span>
+            }
             <span class="hero-chip">
               <i class="material-icons">account_tree</i>
               {{ getEixoNome(metaParaEditar.eixoId) }}

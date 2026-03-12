@@ -14,11 +14,16 @@
 
     <div class="navbar-actions">
         @if (auth.isLoggedIn()) {
+        @if (auth.isCoordenador()) {
+        <button class="btn btn-profile-action" (click)="openDelegacoesModal()">Meus Assessores / Delegações</button>
+        }
         <span class="user-info">
             <i class="material-icons user-avatar">account_circle</i>
-            <span class="user-name">{{ auth.getUsername() }}</span>
-            @if (auth.isCoordenador()) {
-            <span class="role-badge">Coordenador</span>
+            <span class="user-name">{{ auth.getName() }}</span>
+            @if (auth.isDigov()) {
+            <span class="role-badge role-badge--digov">DIGOV</span>
+            } @else if (auth.isCoordenador()) {
+            <span class="role-badge role-badge--coordenador">Coordenador</span>
             }
         </span>
         <button class="btn btn-logout" (click)="logout()">Sair</button>
@@ -27,3 +32,5 @@
         }
     </div>
 </nav>
+
+<app-gerenciar-delegacoes-modal [display]="displayDelegacoesModal" (displayChange)="displayDelegacoesModal = $event"></app-gerenciar-delegacoes-modal>

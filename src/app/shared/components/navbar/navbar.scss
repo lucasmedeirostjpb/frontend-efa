@@ -159,6 +159,16 @@ $highlight-color: #ffd500;
     box-shadow: 0 2px 6px rgba($accent-color, 0.3);
 }
 
+.role-badge--digov {
+    background: linear-gradient(135deg, #fff3bf 0%, $highlight-color 100%);
+    color: color.adjust($secondary-color, $lightness: -6%);
+}
+
+.role-badge--coordenador {
+    background: linear-gradient(135deg, $accent-color 0%, $highlight-color 100%);
+    color: $secondary-color;
+}
+
 // ═══════════════════════════════════════════════════════════════
 // BUTTONS — Login & Logout
 // ═══════════════════════════════════════════════════════════════
@@ -193,6 +203,18 @@ $highlight-color: #ffd500;
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(4px);
+}
+
+.btn-profile-action {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.btn-profile-action:hover {
+    background: rgba($highlight-color, 0.18);
+    border-color: rgba($highlight-color, 0.32);
+    box-shadow: 0 4px 14px rgba($secondary-color, 0.22);
 }
 
 .btn-logout:hover {

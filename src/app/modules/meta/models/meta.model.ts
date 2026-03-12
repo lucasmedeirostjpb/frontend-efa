@@ -11,6 +11,7 @@ export interface Meta {
   coordenadorId?: number;
   coordenadorNome?: string;
   coordenadorLoginKeycloak?: string;
+  delegadosEmails?: string[];
   artigo: string;
   anoCiclo: number;
   deadline: string | Date;

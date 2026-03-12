@@ -158,8 +158,7 @@ $transition-smooth: all 0.3s ease;
 }
 
 .edit-section-toggle {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
     width: 100%;
     border: 1.5px solid $border-color;
     border-radius: $radius-md;
@@ -170,6 +169,7 @@ $transition-smooth: all 0.3s ease;
 
 .edit-section-toggle__button {
     display: inline-flex;
+    flex: 1 1 0;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
@@ -360,6 +360,167 @@ $transition-smooth: all 0.3s ease;
         font-size: 0.95rem;
         color: $tertiary-color;
     }
+}
+
+.history-state {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 1rem 1.1rem;
+    border: 1px dashed rgba($primary-color, 0.18);
+    border-radius: $radius-md;
+    background: rgba($primary-color, 0.03);
+    color: $text-secondary;
+    font-size: 0.92rem;
+
+    .material-icons {
+        color: $primary-color;
+        font-size: 1.1rem;
+    }
+}
+
+.history-state--error {
+    border-style: solid;
+    border-color: rgba($error-color, 0.2);
+    background: rgba($error-color, 0.04);
+    color: #991b1b;
+
+    .material-icons {
+        color: $error-color;
+    }
+}
+
+.history-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.history-entry {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba($primary-color, 0.1);
+    border-radius: $radius-md;
+    background: linear-gradient(180deg, rgba($primary-color, 0.02) 0%, $bg-white 100%);
+}
+
+.history-entry__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.history-entry__date {
+    color: $text-light;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.history-entry__author {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: $text-secondary;
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    .material-icons {
+        color: $tertiary-color;
+        font-size: 1rem;
+    }
+}
+
+.history-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.85rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.history-badge--created {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.history-badge--updated {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.history-badge--deleted {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.history-changes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.history-change {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba($primary-color, 0.08);
+}
+
+.history-change__field {
+    color: $secondary-color;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.history-change__values {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    .material-icons {
+        color: $text-light;
+        font-size: 1rem;
+    }
+}
+
+.history-change__value {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.2rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: $radius-sm;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.history-change__value--old {
+    background: #fff1f2;
+    color: #9f1239;
+}
+
+.history-change__value--new {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.history-entry__empty {
+    margin: 0;
+    color: $text-light;
+    font-size: 0.88rem;
+    line-height: 1.6;
 }
 
 .modal-footer {
@@ -781,6 +942,33 @@ $transition-smooth: all 0.3s ease;
     color: $accent-color;
 }
 
+.hero-chip--role {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.hero-chip--role-digov {
+    border-color: rgba($highlight-color, 0.38);
+    background: rgba($highlight-color, 0.16);
+    color: #fff3bf;
+
+    .material-icons {
+        color: $highlight-color;
+        opacity: 1;
+    }
+}
+
+.hero-chip--role-coordenador {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+
+    .material-icons {
+        color: rgba(255, 255, 255, 0.92);
+        opacity: 1;
+    }
+}
+
 .hero-chip.subtle {
     border-color: rgba(255, 255, 255, 0.08);
     background: transparent;
@@ -837,6 +1025,12 @@ $transition-smooth: all 0.3s ease;
     .info-grid,
     .estimates-grid {
         grid-template-columns: 1fr;
+    }
+
+    .history-entry__top,
+    .history-change__values {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .hero-top {

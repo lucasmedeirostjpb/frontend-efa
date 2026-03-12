@@ -55,6 +55,16 @@ export class Auth {
     return this.keycloak.tokenParsed?.['preferred_username'];
   }
 
+  getEmail(): string | undefined {
+    const email = this.keycloak.tokenParsed?.['email'];
+
+    return typeof email === 'string' ? email.trim().toLowerCase() : undefined;
+  }
+
+  getName(): string | undefined {
+    return this.keycloak.tokenParsed?.['given_name'];
+  }
+
   hasRole(role: string): boolean {
     // Check client roles first, then realm roles
     const clientRoles =
@@ -73,8 +83,20 @@ export class Auth {
     return this.hasRole('DIGOV');
   }
 
+  private isCoordenadorTitular(meta: Meta): boolean {
+    const username = this.getUsername();
+
+    return this.isCoordenador() && !!username && meta.coordenadorLoginKeycloak === username;
+  }
+
+  private isDelegadoDaMeta(meta: Meta): boolean {
+    const email = this.getEmail();
+
+    return !!email && meta.delegadosEmails?.some((delegadoEmail) => delegadoEmail.trim().toLowerCase() === email) === true;
+  }
+
   podeEditarMeta(meta: Meta): boolean {
-    return this.isDigov() || (this.isCoordenador() && meta.coordenadorLoginKeycloak === this.getUsername());
+    return this.isDigov() || this.isCoordenadorTitular(meta) || this.isDelegadoDaMeta(meta);
   }
 
   async updateToken(minValidity: number = 30): Promise<string | undefined> {

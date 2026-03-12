@@ -1,0 +1,103 @@
+<p-dialog
+  [header]="'Meus Assessores / Delegações'"
+  [visible]="display"
+  [modal]="true"
+  [style]="{ width: '52rem' }"
+  [breakpoints]="{ '991px': '92vw', '640px': '98vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  (onHide)="onDialogHide()"
+>
+  <div class="flex flex-column gap-4">
+    <div class="flex flex-column gap-2">
+      <p class="m-0 text-color-secondary">Cadastre e remova assessores por e-mail para atuar como delegados na gestão dos requisitos.</p>
+      @if (actionError) {
+      <small class="text-red-600">{{ actionError }}</small>
+      }
+    </div>
+
+    <form [formGroup]="delegacaoForm" class="formgrid grid align-items-start md:align-items-end" (ngSubmit)="addDelegacao()">
+      <div class="field col-12 md:col-4">
+        <label for="delegadoEmail" class="font-semibold block mb-2">E-mail do Delegado</label>
+        <input
+          pInputText
+          id="delegadoEmail"
+          type="email"
+          formControlName="email"
+          class="w-full"
+          placeholder="assessor@tjpb.jus.br"
+          autocomplete="email"
+        />
+        @if (emailControl.invalid && (emailControl.dirty || emailControl.touched)) {
+        <small class="text-red-600 block mt-2">
+          @if (emailControl.errors?.['required']) {
+          Informe o e-mail do delegado.
+          } @else if (emailControl.errors?.['email']) {
+          Informe um e-mail válido.
+          }
+        </small>
+        }
+      </div>
+
+      <div class="field col-12 md:col-5">
+        <label for="delegadoNome" class="font-semibold block mb-2">Nome de Referência</label>
+        <input pInputText id="delegadoNome" formControlName="nome" class="w-full" placeholder="Digite o nome de referência" />
+        @if (nomeControl.invalid && (nomeControl.dirty || nomeControl.touched)) {
+        <small class="text-red-600 block mt-2">Informe o nome de referência.</small>
+        }
+      </div>
+
+      <div class="field col-12 md:col-3 flex md:justify-content-end">
+        <button pButton type="submit" icon="pi pi-plus" label="Adicionar" [disabled]="isAddDisabled()"></button>
+      </div>
+    </form>
+
+    @if (loadError) {
+    <div class="border-1 border-red-300 border-round-md p-3 text-red-700 surface-ground">
+      {{ loadError }}
+    </div>
+    }
+
+    @if (loading) {
+    <div class="surface-ground border-round-md p-4 text-center text-color-secondary">
+      Carregando assessores delegados...
+    </div>
+    } @else {
+    <p-table [value]="delegacoes" [responsiveLayout]="'scroll'" styleClass="p-datatable-striped p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th style="width: 8rem;">Ação</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-delegacao>
+        <tr>
+          <td>{{ delegacao.delegadoNome }}</td>
+          <td>{{ delegacao.delegadoEmail }}</td>
+          <td>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              label="Excluir"
+              severity="danger"
+              [text]="true"
+              [disabled]="deletingId === delegacao.id"
+              (click)="removeDelegacao(delegacao)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3" class="text-center text-color-secondary py-4">Nenhum assessor delegado cadastrado.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    }
+  </div>
+</p-dialog>
