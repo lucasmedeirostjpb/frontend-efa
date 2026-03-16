@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root',
 })
 export class SetorService {
-  private readonly apiUrl = `/api/setores`;
+  private readonly apiUrl = `${environment.apiUrl}/api/setores`;
 
   constructor(private http: HttpClient) { }
 

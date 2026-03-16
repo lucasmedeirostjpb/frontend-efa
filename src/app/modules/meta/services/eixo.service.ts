@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root',
 })
 export class EixoService {
-  private readonly apiUrl = `/api/eixos`;
+  private readonly apiUrl = `${environment.apiUrl}/api/eixos`;
 
   constructor(private http: HttpClient) { }
 

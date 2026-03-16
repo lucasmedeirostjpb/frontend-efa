@@ -18,9 +18,7 @@ export class MetaService {
 
   private readonly apiUrl = `${environment.apiUrl}/api/metas`;
 
-  constructor(private http: HttpClient) { 
-    console.log('MetaService: apiUrl configurada como:', this.apiUrl);
-  }
+  constructor(private http: HttpClient) { }
 
   /**
    * GET /api/metas?page=X&size=Y - Lista metas com paginação.
