@@ -181,7 +181,7 @@ npm install
 ### Desenvolvimento
 
 ```bash
-ng serve --proxy-config proxy.conf.json
+npm start
 ```
 
 Acesse: **http://localhost:4200**
@@ -191,10 +191,12 @@ O proxy redireciona `/api/*` → `http://localhost:8081` automaticamente.
 ### Build de Produção
 
 ```bash
-ng build
+npm run build:prod
 ```
 
 Output gerado em `dist/efa-frontend/`.
+
+> Em produção, configure o proxy reverso para rotear `/api` para o backend e preencha `src/environments/environment.prod.ts` com a URL pública do Keycloak.
 
 ---
 
